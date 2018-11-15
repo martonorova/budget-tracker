@@ -1,0 +1,25 @@
+package com.morova.budgettracker.data;
+
+import android.arch.persistence.room.Dao;
+import android.arch.persistence.room.Delete;
+import android.arch.persistence.room.Insert;
+import android.arch.persistence.room.Query;
+import android.arch.persistence.room.Update;
+
+import java.util.List;
+
+@Dao
+public interface CategoryDao {
+
+    @Query("SELECT * FROM category")
+    List<Category> getAll();
+
+    @Insert
+    long insert(Category category);
+
+    @Update
+    void update(Category category);
+
+    @Delete
+    void deleteCategory(Category category);
+}
