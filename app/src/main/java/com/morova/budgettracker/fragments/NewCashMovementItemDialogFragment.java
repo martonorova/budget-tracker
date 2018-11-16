@@ -61,6 +61,7 @@ public class NewCashMovementItemDialogFragment extends DialogFragment {
 
         View contentView = LayoutInflater.from(getContext())
                 .inflate(R.layout.dialog_new_cash_movement_item, null);
+        return contentView;
     }
 
     public interface NewCashMovementItemDialogListener {

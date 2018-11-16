@@ -1,5 +1,6 @@
 package com.morova.budgettracker.data.daos;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
@@ -13,11 +14,11 @@ import java.util.List;
 @Dao
 public interface CashMovementItemDao {
 
-    @Query("SELECT * FROM cash_movement_item")
-    List<CashMovementItem> getAll();
+    @Query("SELECT * FROM cash_movement_item_table")
+    LiveData<List<CashMovementItem>> getAllItems();
 
     @Insert
-    long inser(CashMovementItem cashMovementItem);
+    long insert(CashMovementItem cashMovementItem);
 
     @Update
     void update(CashMovementItem cashMovementItem);

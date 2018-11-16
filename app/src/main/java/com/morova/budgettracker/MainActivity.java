@@ -19,8 +19,9 @@ import com.morova.budgettracker.data.entities.Category;
 
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements
-        CashMovementAdapter.CashMovementItemClickListener{
+public class MainActivity extends AppCompatActivity/* implements
+        CashMovementAdapter.CashMovementItemClickListener*/{
+
 
     private RecyclerView recyclerView;
     private CashMovementAdapter adapter;
@@ -48,48 +49,48 @@ public class MainActivity extends AppCompatActivity implements
         database = BudgetTrackerDatabase.getInstance(getApplicationContext());
     }
 
-    private void initRecyclerView() {
-        recyclerView = findViewById(R.id.MainRecyclerView);
-        adapter = new CashMovementAdapter(this);
-        loadItemsInBackground();
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(adapter);
-    }
+//    private void initRecyclerView() {
+//        recyclerView = findViewById(R.id.MainRecyclerView);
+//        adapter = new CashMovementAdapter(this);
+//        loadItemsInBackground();
+//        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+//        recyclerView.setAdapter(adapter);
+//    }
 
-    private void loadItemsInBackground() {
-
-        //CashMovementItems
-
-        new AsyncTask<Void, Void, List<CashMovementItem>>() {
-            @Override
-            protected List<CashMovementItem> doInBackground(Void... voids) {
-                return database.cashMovementItemDao().getAll();
-            }
-
-            @Override
-            protected void onPostExecute(List<CashMovementItem> cashMovementItems) {
-                adapter.updateCashMovementItems(cashMovementItems);
-            }
-        }.execute();
-
-
-        //Categories
-
-        new AsyncTask<Void, Void, List<Category>>() {
-            @Override
-            protected List<Category> doInBackground(Void... voids) {
-                return database.categoryDao().getAll();
-            }
-
-            @Override
-            protected void onPostExecute(List<Category> categories) {
-                adapter.updateCategories(categories);
-            }
-        }.execute();
-
-
-
-    }
+//    private void loadItemsInBackground() {
+//
+//        //CashMovementItems
+//
+//        new AsyncTask<Void, Void, List<CashMovementItem>>() {
+//            @Override
+//            protected List<CashMovementItem> doInBackground(Void... voids) {
+//                return database.cashMovementItemDao().getAllItems();
+//            }
+//
+//            @Override
+//            protected void onPostExecute(List<CashMovementItem> cashMovementItems) {
+//                adapter.updateCashMovementItems(cashMovementItems);
+//            }
+//        }.execute();
+//
+//
+//        //Categories
+//
+//        new AsyncTask<Void, Void, List<Category>>() {
+//            @Override
+//            protected List<Category> doInBackground(Void... voids) {
+//                return database.categoryDao().getAll();
+//            }
+//
+//            @Override
+//            protected void onPostExecute(List<Category> categories) {
+//                adapter.updateCategories(categories);
+//            }
+//        }.execute();
+//
+//
+//
+//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -113,8 +114,8 @@ public class MainActivity extends AppCompatActivity implements
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onItemChanged(CashMovementItem cashMovementItem) {
-
-    }
+//    @Override
+//    public void onItemChanged(CashMovementItem cashMovementItem) {
+//
+//    }
 }
