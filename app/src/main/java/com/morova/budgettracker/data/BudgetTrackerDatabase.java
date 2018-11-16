@@ -6,30 +6,31 @@ import android.arch.persistence.room.RoomDatabase;
 import android.arch.persistence.room.TypeConverters;
 import android.content.Context;
 
+import com.morova.budgettracker.data.daos.CashMovementItemDao;
+import com.morova.budgettracker.data.daos.CategoryDao;
+import com.morova.budgettracker.data.entities.CashMovementItem;
+import com.morova.budgettracker.data.entities.Category;
+
 @Database(
         entities = {CashMovementItem.class, Category.class},
         version = 1
 )
-@TypeConverters(value = {Category.Direction.class, Converters.class})
+@TypeConverters(value = {Converters.class})
 public abstract class BudgetTrackerDatabase extends RoomDatabase {
 
     private static BudgetTrackerDatabase instance;
 
     public abstract CategoryDao categoryDao();
+
     public abstract CashMovementItemDao cashMovementItemDao();
 
-    public static BudgetTrackerDatabase getInstance(Context context) {
+    public static synchronized BudgetTrackerDatabase getInstance(Context context) {
         if (instance == null) {
             instance = Room.databaseBuilder(context.getApplicationContext(),
                     BudgetTrackerDatabase.class,
-                    "budget-tracker").build();
+                    "budget_tracker_database")
+                    .build();
         }
-
         return instance;
-    }
-
-    public static void destroyInstance() {
-        //TODO is that it?
-        instance = null;
     }
 }

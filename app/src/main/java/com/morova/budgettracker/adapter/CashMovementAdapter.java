@@ -9,8 +9,8 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.morova.budgettracker.R;
-import com.morova.budgettracker.data.CashMovementItem;
-import com.morova.budgettracker.data.Category;
+import com.morova.budgettracker.data.entities.CashMovementItem;
+import com.morova.budgettracker.data.entities.Category;
 
 import java.util.ArrayList;
 import java.util.HashMap;

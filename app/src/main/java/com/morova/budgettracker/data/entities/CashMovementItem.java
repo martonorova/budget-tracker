@@ -1,14 +1,15 @@
-package com.morova.budgettracker.data;
+package com.morova.budgettracker.data.entities;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.PrimaryKey;
-import android.arch.persistence.room.TypeConverter;
+
+import com.morova.budgettracker.data.entities.Category;
 
 import java.time.LocalDateTime;
 
-@Entity(tableName = "cash_movement_item",
+@Entity(tableName = "cash_movement_item_table",
         foreignKeys = @ForeignKey(entity = Category.class,
                 parentColumns = "id",
                 childColumns = "category_id",
@@ -31,8 +32,7 @@ public class CashMovementItem {
     @ColumnInfo(name = "category_id")
     private Long categoryId;
 
-    public CashMovementItem(Long id, int amount, LocalDateTime dateTime, String comment, Long categoryId) {
-        this.id = id;
+    public CashMovementItem(int amount, LocalDateTime dateTime, String comment, Long categoryId) {
         this.amount = amount;
         this.dateTime = dateTime;
         this.comment = comment;

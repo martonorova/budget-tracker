@@ -12,7 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 
 import com.morova.budgettracker.R;
-import com.morova.budgettracker.data.CashMovementItem;
+import com.morova.budgettracker.data.entities.CashMovementItem;
 
 public class NewCashMovementItemDialogFragment extends DialogFragment {
 

@@ -1,6 +1,5 @@
 package com.morova.budgettracker;
 
-import android.arch.persistence.room.Room;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -15,8 +14,8 @@ import android.view.MenuItem;
 
 import com.morova.budgettracker.adapter.CashMovementAdapter;
 import com.morova.budgettracker.data.BudgetTrackerDatabase;
-import com.morova.budgettracker.data.CashMovementItem;
-import com.morova.budgettracker.data.Category;
+import com.morova.budgettracker.data.entities.CashMovementItem;
+import com.morova.budgettracker.data.entities.Category;
 
 import java.util.List;
 
