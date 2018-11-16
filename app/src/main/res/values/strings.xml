@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">BudgetTracker</string>
     <string name="action_settings">Settings</string>
+    <string name="new_cash_movement_item">New cash movement item</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
 </resources>
