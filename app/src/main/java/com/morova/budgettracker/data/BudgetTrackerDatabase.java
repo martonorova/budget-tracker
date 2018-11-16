@@ -34,6 +34,7 @@ public abstract class BudgetTrackerDatabase extends RoomDatabase {
             instance = Room.databaseBuilder(context.getApplicationContext(),
                     BudgetTrackerDatabase.class,
                     "budget_tracker_database")
+                    .fallbackToDestructiveMigration()
                     .addCallback(roomCallback)
                     .build();
         }
@@ -77,14 +78,14 @@ public abstract class BudgetTrackerDatabase extends RoomDatabase {
                     1000,
                     LocalDateTime.now(),
                     "comment 1",
-                    allowance.getId()
+                    (long)4
             ));
 
             cashMovementItemDao.insert(new CashMovementItem(
                     353,
                     LocalDateTime.now(),
                     "comment 2",
-                    food.getId()
+                    (long)1
             ));
 
             return null;

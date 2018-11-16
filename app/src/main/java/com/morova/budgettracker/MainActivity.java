@@ -1,7 +1,10 @@
 package com.morova.budgettracker;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -16,24 +19,57 @@ import com.morova.budgettracker.adapter.CashMovementAdapter;
 import com.morova.budgettracker.data.BudgetTrackerDatabase;
 import com.morova.budgettracker.data.entities.CashMovementItem;
 import com.morova.budgettracker.data.entities.Category;
+import com.morova.budgettracker.data.viewmodels.CashMovementItemViewModel;
+import com.morova.budgettracker.data.viewmodels.CategoryViewModel;
 
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity/* implements
-        CashMovementAdapter.CashMovementItemClickListener*/{
+        CashMovementAdapter.CashMovementItemClickListener*/ {
 
+    private CashMovementItemViewModel cashMovementItemViewModel;
+    private CategoryViewModel categoryViewModel;
 
-    private RecyclerView recyclerView;
-    private CashMovementAdapter adapter;
+//    private RecyclerView recyclerView;
 
-    private BudgetTrackerDatabase database;
+//    private BudgetTrackerDatabase database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        RecyclerView recyclerView = findViewById(R.id.MainRecyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setHasFixedSize(true);
+
+        final CashMovementAdapter adapter = new CashMovementAdapter();
+        recyclerView.setAdapter(adapter);
+
+        categoryViewModel = ViewModelProviders.of(this)
+                .get(CategoryViewModel.class);
+        categoryViewModel.getAllCategories().observe(this, new Observer<List<Category>>() {
+            @Override
+            public void onChanged(@Nullable List<Category> categories) {
+                adapter.setCategories(categories);
+            }
+        });
+
+        cashMovementItemViewModel = ViewModelProviders.of(this)
+                .get(CashMovementItemViewModel.class);
+        cashMovementItemViewModel.getAllItems().observe(this, new Observer<List<CashMovementItem>>() {
+            @Override
+            public void onChanged(@Nullable List<CashMovementItem> cashMovementItems) {
+                adapter.setCashMovementItems(cashMovementItems);
+            }
+        });
+
+
+
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -46,7 +82,7 @@ public class MainActivity extends AppCompatActivity/* implements
             }
         });
 
-        database = BudgetTrackerDatabase.getInstance(getApplicationContext());
+//        database = BudgetTrackerDatabase.getInstance(getApplicationContext());
     }
 
 //    private void initRecyclerView() {

@@ -1,6 +1,7 @@
 package com.morova.budgettracker.adapter;
 
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,36 +21,37 @@ import java.util.Map;
 public class CashMovementAdapter
         extends RecyclerView.Adapter<CashMovementAdapter.CashMovementViewHolder> {
 
-    private final List<CashMovementItem> items;
-    private final Map<Long, Category> categoryMap;
+    private List<CashMovementItem> items = new ArrayList<>();
+    private Map<Long, Category> categoryMap = new HashMap<>();
 
-    private CashMovementItemClickListener listener;
+//    private CashMovementItemClickListener listener;
 
-    public CashMovementAdapter(CashMovementItemClickListener listener) {
-        this.listener = listener;
-        items = new ArrayList<>();
-        categoryMap = new HashMap<>();
-    }
+//    public CashMovementAdapter(CashMovementItemClickListener listener) {
+////        this.listener = listener;
+//        items = new ArrayList<>();
+//        categoryMap = new HashMap<>();
+//    }
 
+    @NonNull
     @Override
-    public CashMovementViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public CashMovementViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater
                 .from(parent.getContext())
-                .inflate(R.layout.item_cash_movement_list, parent, false);
+                .inflate(R.layout.cash_movement_item, parent, false);
         return new CashMovementViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(CashMovementViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull CashMovementViewHolder holder, int position) {
 
         CashMovementItem item = items.get(position);
         Category actualCategory = categoryMap.get(item.getCategoryId());
         holder.categoryTextView.setText(actualCategory.getName());
         holder.directionTextView.setText(actualCategory.getDirection().toString());
-        holder.amountTextVIew.setText(item.getAmount());
+        holder.amountTextVIew.setText(String.valueOf(item.getAmount()));
         //TODO item.getComment()
 
-        holder.item = item;
+//        holder.item = item;
     }
 
     @Override
@@ -57,30 +59,31 @@ public class CashMovementAdapter
         return items.size();
     }
 
-    public void addItem(CashMovementItem cashMovementItem) {
-        items.add(cashMovementItem);
-        notifyItemInserted(items.size() - 1);
-    }
+//    public void addItem(CashMovementItem cashMovementItem) {
+//        items.add(cashMovementItem);
+//        notifyItemInserted(items.size() - 1);
+//    }
 
-    public void updateCashMovementItems(List<CashMovementItem> cashMovementItems) {
-        items.clear();
-        items.addAll(cashMovementItems);
+    public void setCashMovementItems(List<CashMovementItem> cashMovementItems) {
+        items = cashMovementItems;
         notifyDataSetChanged();
     }
 
-    public void addCategory(Category category) {
-        categoryMap.put(category.getId(), category);
-    }
+//    public void addCategory(Category category) {
+//        categoryMap.put(category.getId(), category);
+//    }
 
-    public void updateCategories(List<Category> categories) {
+    public void setCategories(List<Category> categories) {
+        categoryMap.clear();
         for (Category category : categories) {
             categoryMap.put(category.getId(), category);
         }
+        notifyDataSetChanged();
     }
 
-    public interface CashMovementItemClickListener {
-        void onItemChanged(CashMovementItem cashMovementItem);
-    }
+//    public interface CashMovementItemClickListener {
+//        void onItemChanged(CashMovementItem cashMovementItem);
+//    }
 
     class CashMovementViewHolder extends RecyclerView.ViewHolder {
 
@@ -89,11 +92,8 @@ public class CashMovementAdapter
         TextView amountTextVIew;
         ImageButton removeButton;
 
-        CashMovementItem item;
-
         public CashMovementViewHolder(View itemView) {
             super(itemView);
-
             categoryTextView = itemView.findViewById(R.id.CategoryTextView);
             directionTextView = itemView.findViewById(R.id.DirectionTextView);
             amountTextVIew = itemView.findViewById(R.id.AmountTextView);
