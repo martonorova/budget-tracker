@@ -2,6 +2,7 @@ package com.morova.budgettracker;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -26,6 +27,8 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity/* implements
         CashMovementAdapter.CashMovementItemClickListener*/ {
+
+            ///TODO create resources where possible
 
     private CashMovementItemViewModel cashMovementItemViewModel;
     private CategoryViewModel categoryViewModel;
@@ -76,9 +79,12 @@ public class MainActivity extends AppCompatActivity/* implements
             @Override
             public void onClick(View view) {
 
+                Intent intent = new Intent(MainActivity.this, AddCashMovementItemActivity.class);
+                startActivity(intent);
+
                 //TODO implement
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
             }
         });
 
