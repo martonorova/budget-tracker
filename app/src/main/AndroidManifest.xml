@@ -25,7 +25,7 @@
             android:label="@string/title_activity_add_cash_movement_item"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".AddEditActivity"></activity>
+        <activity android:name=".CategoryListActivity"></activity>
     </application>
 
 </manifest>

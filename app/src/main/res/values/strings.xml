@@ -17,4 +17,5 @@
     <string name="categories">Categories</string>
     <string name="create_new_category">Create new category</string>
     <string name="name_of_the_new_category">Name of the new category</string>
+    <string name="manage_categories">Manage categories</string>
 </resources>

@@ -2,6 +2,7 @@ package com.morova.budgettracker;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -34,7 +35,7 @@ public class AddCashMovementItemActivity extends AppCompatActivity
     private CashMovementItemViewModel cashMovementItemViewModel;
     private CategoryViewModel categoryViewModel;
 
-    private Button newCategoryButton;
+    private Button manageCategoriesButton;
     private EditText amountEditText;
     private EditText commentEditText;
     private Spinner categorySpinner;
@@ -96,17 +97,21 @@ public class AddCashMovementItemActivity extends AppCompatActivity
 
         });
 
-        newCategoryButton.setOnClickListener(new View.OnClickListener() {
+        manageCategoriesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new NewCategoryDialogFragment()
-                        .show(getSupportFragmentManager(), NewCategoryDialogFragment.TAG);
+//                new NewCategoryDialogFragment()
+//                        .show(getSupportFragmentManager(), NewCategoryDialogFragment.TAG);
+
+                Intent intent = new Intent(AddCashMovementItemActivity.this, CategoryListActivity.class);
+                startActivity(intent);
+
             }
         });
     }
 
     private void initContentView() {
-        newCategoryButton = findViewById(R.id.NewCategoryButton);
+        manageCategoriesButton = findViewById(R.id.ManageCategoriesButton);
         amountEditText = findViewById(R.id.AmountEditText);
         commentEditText = findViewById(R.id.CommentEditText);
         categorySpinner = findViewById(R.id.CategorySpinner);

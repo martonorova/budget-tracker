@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity/* implements
             @Override
             public void onClick(View view) {
 
-                Intent intent = new Intent(MainActivity.this, AddEditActivity.class);
+                Intent intent = new Intent(MainActivity.this, AddCashMovementItemActivity.class);
                 startActivity(intent);
 
                 //TODO implement
