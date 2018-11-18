@@ -18,4 +18,6 @@
     <string name="create_new_category">Create new category</string>
     <string name="name_of_the_new_category">Name of the new category</string>
     <string name="manage_categories">Manage categories</string>
+    <string name="warn_delete_item">Are you sure you want to delete this item?</string>
+    <string name="warn_fill_amount">Please fill in the amount</string>
 </resources>

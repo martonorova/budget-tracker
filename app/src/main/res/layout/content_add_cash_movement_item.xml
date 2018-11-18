@@ -7,8 +7,8 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     android:orientation="vertical"
     android:padding="16dp"
-    tools:context="com.morova.budgettracker.AddCashMovementItemActivity"
-    tools:showIn="@layout/activity_add_cash_movement_item">
+    tools:context="com.morova.budgettracker.AddEditCashMovementItemActivity"
+    tools:showIn="@layout/activity_add_edit_cash_movement_item">
 
     <Button
         android:id="@+id/ManageCategoriesButton"
@@ -24,8 +24,7 @@
     <Spinner
         android:id="@+id/CategorySpinner"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#FF0000">
+        android:layout_height="wrap_content">
 
     </Spinner>
 

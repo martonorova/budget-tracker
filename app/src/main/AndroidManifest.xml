@@ -21,7 +21,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".AddCashMovementItemActivity"
+            android:name=".AddEditCashMovementItemActivity"
             android:label="@string/title_activity_add_cash_movement_item"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar" />

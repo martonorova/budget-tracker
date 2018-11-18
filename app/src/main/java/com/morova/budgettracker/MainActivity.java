@@ -2,13 +2,12 @@ package com.morova.budgettracker;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.icu.text.UnicodeSetSpanner;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,7 +18,6 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.morova.budgettracker.adapter.CashMovementAdapter;
-import com.morova.budgettracker.data.BudgetTrackerDatabase;
 import com.morova.budgettracker.data.entities.CashMovementItem;
 import com.morova.budgettracker.data.entities.Category;
 import com.morova.budgettracker.data.viewmodels.CashMovementItemViewModel;
@@ -52,7 +50,7 @@ public class MainActivity extends AppCompatActivity
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
 
-        final CashMovementAdapter adapter = new CashMovementAdapter();
+        final CashMovementAdapter adapter = new CashMovementAdapter(this);
         recyclerView.setAdapter(adapter);
 
         categoryViewModel = ViewModelProviders.of(this)
@@ -81,7 +79,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
 
-                Intent intent = new Intent(MainActivity.this, AddCashMovementItemActivity.class);
+                Intent intent = new Intent(MainActivity.this, AddEditCashMovementItemActivity.class);
                 startActivityForResult(intent, ADD_CASH_MOV_ITEM_REQUEST);
             }
         });
@@ -92,11 +90,11 @@ public class MainActivity extends AppCompatActivity
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == ADD_CASH_MOV_ITEM_REQUEST && resultCode == RESULT_OK) {
-            int amount = data.getIntExtra(AddCashMovementItemActivity.EXTRA_AMOUNT, -1);
+            int amount = data.getIntExtra(AddEditCashMovementItemActivity.EXTRA_AMOUNT, -1);
             LocalDateTime dateTime = LocalDateTime.parse(
-                    data.getStringExtra(AddCashMovementItemActivity.EXTRA_DATE));
-            String comment = data.getStringExtra(AddCashMovementItemActivity.EXTRA_COMMENT);
-            long categoryId = data.getLongExtra(AddCashMovementItemActivity.EXTRA_CATEGORY_ID, -1);
+                    data.getStringExtra(AddEditCashMovementItemActivity.EXTRA_DATE));
+            String comment = data.getStringExtra(AddEditCashMovementItemActivity.EXTRA_COMMENT);
+            long categoryId = data.getLongExtra(AddEditCashMovementItemActivity.EXTRA_CATEGORY_ID, -1);
 
             CashMovementItem newItem = new CashMovementItem(
                     amount,
@@ -114,7 +112,42 @@ public class MainActivity extends AppCompatActivity
                 cashMovementItemViewModel.insert(newItem);
                 Toast.makeText(this, "Item saved", Toast.LENGTH_LONG).show();
             }
-        }  else {
+        } else if (requestCode == EDIT_CASH_MOV_ITEM_REQUEST && resultCode == RESULT_OK) {
+
+            long id = data.getLongExtra(AddEditCashMovementItemActivity.EXTRA_ID, -1);
+
+            if (id == -1) {
+                Toast.makeText(
+                        MainActivity.this, "Item cannot be updated.", Toast.LENGTH_LONG).show();
+                return;
+            }
+
+            int amount = data.getIntExtra(AddEditCashMovementItemActivity.EXTRA_AMOUNT, -1);
+            LocalDateTime dateTime = LocalDateTime.parse(
+                    data.getStringExtra(AddEditCashMovementItemActivity.EXTRA_DATE));
+            String comment = data.getStringExtra(AddEditCashMovementItemActivity.EXTRA_COMMENT);
+            long categoryId = data.getLongExtra(AddEditCashMovementItemActivity.EXTRA_CATEGORY_ID, -1);
+
+            CashMovementItem newItem = new CashMovementItem(
+                    amount,
+                    dateTime,
+                    comment,
+                    categoryId
+            );
+
+            newItem.setId(id);
+
+            if (amount == -1 || categoryId == -1) {
+                Toast.makeText(
+                        this,"Item cannot be updated, wrong amount or categoryId",
+                        Toast.LENGTH_LONG)
+                        .show();
+            } else {
+                cashMovementItemViewModel.update(newItem);
+                Toast.makeText(this, "Item updated", Toast.LENGTH_LONG).show();
+            }
+
+        } else {
             Toast.makeText(this, "Item not saved", Toast.LENGTH_LONG)
                     .show();
         }
@@ -144,12 +177,36 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onItemRemoveClick(CashMovementItem cashMovementItem) {
+    public void onItemRemoveClick(final CashMovementItem cashMovementItem) {
         //TODO implement warn + remove
+        //AlertDialog
+         AlertDialog.Builder alertBox = new AlertDialog.Builder(this);
+         alertBox.setMessage(R.string.warn_delete_item);
+         alertBox.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+             @Override
+             public void onClick(DialogInterface dialog, int which) {
+                 cashMovementItemViewModel.delete(cashMovementItem);
+             }
+         });
+         alertBox.setNeutralButton(R.string.cancel, null);
+         alertBox.show();
+
+
+        //cashMovementItemViewModel.delete(cashMovementItem);
     }
 
     @Override
     public void onItemEditClick(CashMovementItem cashMovementItem) {
         //TODO implement intent to edit activity
+
+
+        Intent intent = new Intent(MainActivity.this, AddEditCashMovementItemActivity.class);
+        intent.putExtra(AddEditCashMovementItemActivity.EXTRA_ID, cashMovementItem.getId());
+        intent.putExtra(AddEditCashMovementItemActivity.EXTRA_AMOUNT, cashMovementItem.getAmount());
+        intent.putExtra(AddEditCashMovementItemActivity.EXTRA_DATE, cashMovementItem.getDateTime().toString());
+        intent.putExtra(AddEditCashMovementItemActivity.EXTRA_COMMENT, cashMovementItem.getComment());
+        intent.putExtra(AddEditCashMovementItemActivity.EXTRA_CATEGORY_ID, cashMovementItem.getCategoryId());
+
+        startActivityForResult(intent, EDIT_CASH_MOV_ITEM_REQUEST);
     }
 }

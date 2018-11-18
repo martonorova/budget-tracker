@@ -17,9 +17,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.morova.budgettracker.data.entities.CashMovementItem;
 import com.morova.budgettracker.data.entities.Category;
-import com.morova.budgettracker.data.viewmodels.CashMovementItemViewModel;
 import com.morova.budgettracker.data.viewmodels.CategoryViewModel;
 import com.morova.budgettracker.fragments.NewCategoryDialogFragment;
 
@@ -27,19 +25,16 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AddCashMovementItemActivity extends AppCompatActivity
+public class AddEditCashMovementItemActivity extends AppCompatActivity
         implements NewCategoryDialogFragment.NewCategoryDialogListener{
 
-    public static final String EXTRA_ID = "com.morova.budgettracker.AddCashMovementItemActivity.EXTRA_ID";
-    public static final String EXTRA_AMOUNT = "com.morova.budgettracker.AddCashMovementItemActivity.EXTRA_AMOUNT";
-    public static final String EXTRA_DATE = "com.morova.budgettracker.AddCashMovementItemActivity.EXTRA_DATE";
-    public static final String EXTRA_COMMENT = "com.morova.budgettracker.AddCashMovementItemActivity.EXTRA_COMMENT";
-    public static final String EXTRA_CATEGORY_ID = "com.morova.budgettracker.AddCashMovementItemActivity.EXTRA_CATEGORY_ID";
-
+    public static final String EXTRA_ID = "com.morova.budgettracker.AddEditCashMovementItemActivity.EXTRA_ID";
+    public static final String EXTRA_AMOUNT = "com.morova.budgettracker.AddEditCashMovementItemActivity.EXTRA_AMOUNT";
+    public static final String EXTRA_DATE = "com.morova.budgettracker.AddEditCashMovementItemActivity.EXTRA_DATE";
+    public static final String EXTRA_COMMENT = "com.morova.budgettracker.AddEditCashMovementItemActivity.EXTRA_COMMENT";
+    public static final String EXTRA_CATEGORY_ID = "com.morova.budgettracker.AddEditCashMovementItemActivity.EXTRA_CATEGORY_ID";
 
     private List<Category> categoryList = new ArrayList<>();
-
-    //private CashMovementItemViewModel cashMovementItemViewModel;
     private CategoryViewModel categoryViewModel;
 
     private Button manageCategoriesButton;
@@ -47,13 +42,40 @@ public class AddCashMovementItemActivity extends AppCompatActivity
     private EditText commentEditText;
     private Spinner categorySpinner;
     private Button saveItemButton;
+    // TODO create private methods
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_cash_movement_item);
+        setContentView(R.layout.activity_add_edit_cash_movement_item);
 
         initContentView();
+
+        Intent intent = getIntent();
+
+        // a bit hacky solution, when editing an item, wanted to set the spinner's initial position
+        // according to the categoryId, which comes from the intent
+        // but the observer for the LiveData<List<Category>> does not update the
+        // category list before the following code ( originally this code was after setting up
+        // the observer)
+
+        long categoryIdtmp = -1;
+
+        if (intent.hasExtra(EXTRA_ID)) {
+
+            setTitle("Edit item");
+            amountEditText.setText(String.valueOf(intent.getIntExtra(EXTRA_AMOUNT, -1)));
+            commentEditText.setText(intent.getStringExtra(EXTRA_COMMENT));
+//            categorySpinner.setSelection(
+//                    getCategoryPosition(intent.getLongExtra(EXTRA_CATEGORY_ID, -1))
+//            );
+
+            categoryIdtmp = intent.getLongExtra(EXTRA_CATEGORY_ID, -1);
+        } else {
+            setTitle("Add new item");
+        }
+
+        final long categoryId = categoryIdtmp;
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.add_cash_movement_item_toolbar);
         setSupportActionBar(toolbar);
@@ -67,34 +89,50 @@ public class AddCashMovementItemActivity extends AppCompatActivity
         categoryViewModel.getAllCategories().observe(this, new Observer<List<Category>>() {
             @Override
             public void onChanged(@Nullable List<Category> categories) {
-                categoryList.clear();
-                categoryList.addAll(categories);
-                categoryArrayAdapter.notifyDataSetChanged();
+                if (categories != null) {
+                    categoryList.clear();
+                    categoryList.addAll(categories);
+                    categoryArrayAdapter.notifyDataSetChanged();
+                    setCategorySpinnerPosition(categoryId);
+                }
             }
         });
 
+        setButtonListeners();
+    }
+
+    private void setButtonListeners() {
         saveItemButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (isValidInput()) {
                     saveItem();
-
                 } else {
-                    Snackbar.make(v, "Please fill the amount",Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(v, R.string.warn_fill_amount,Snackbar.LENGTH_LONG).show();
                 }
             }
-
         });
 
         manageCategoriesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                Intent intent = new Intent(AddCashMovementItemActivity.this, CategoryListActivity.class);
+                Intent intent = new Intent(
+                        AddEditCashMovementItemActivity.this, CategoryListActivity.class);
                 startActivity(intent);
-
             }
         });
+    }
+
+    private void setCategorySpinnerPosition(long categoryId) {
+        if (categoryId == -1) {
+            return;
+        }
+        for (Category category : categoryList) {
+            if (category.getId().equals(categoryId)) {
+                categorySpinner.setSelection(categoryList.indexOf(category));
+                return;
+            }
+        }
     }
 
     private void initContentView() {
@@ -141,12 +179,6 @@ public class AddCashMovementItemActivity extends AppCompatActivity
     }
 
     private void saveItem() {
-        //                    CashMovementItem newItem = new CashMovementItem(
-//                            Integer.parseInt(amountEditText.getText().toString()),
-//                            LocalDateTime.now(),
-//                            commentEditText.getText().toString(),
-//                            ((Category) categorySpinner.getSelectedItem()).getId()
-//                    );
 
         int amount = Integer.parseInt(amountEditText.getText().toString());
         String comment = commentEditText.getText().toString();
@@ -158,7 +190,12 @@ public class AddCashMovementItemActivity extends AppCompatActivity
         data.putExtra(EXTRA_COMMENT, comment);
         data.putExtra(EXTRA_CATEGORY_ID, categoryId);
 
-        //cashMovementItemViewModel.insert(newItem);
+        long id = getIntent().getLongExtra(EXTRA_ID, -1);
+
+        if (id != -1) {
+            data.putExtra(EXTRA_ID, id);
+        }
+
         setResult(RESULT_OK, data);
         finish();
     }
