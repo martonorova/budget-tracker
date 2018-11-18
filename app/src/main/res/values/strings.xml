@@ -5,4 +5,16 @@
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
     <string name="title_activity_add_cash_movement_item">Add new item</string>
+    <string name="new_category">New category</string>
+    <string name="hint_name_of_the_new_category">Name of the new category</string>
+    <string name="income">INCOME</string>
+    <string name="expense">EXPENSE</string>
+    <string name="warn_specify_name">Please specify the name</string>
+    <string name="category">Category</string>
+    <string name="amount">Amount</string>
+    <string name="comment">Comment</string>
+    <string name="save">Save</string>
+    <string name="categories">Categories</string>
+    <string name="create_new_category">Create new category</string>
+    <string name="name_of_the_new_category">Name of the new category</string>
 </resources>

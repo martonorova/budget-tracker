@@ -91,6 +91,7 @@ public class CashMovementAdapter
         TextView directionTextView;
         TextView amountTextVIew;
         ImageButton removeButton;
+        ImageButton editButton;
 
         public CashMovementViewHolder(View itemView) {
             super(itemView);
@@ -98,6 +99,7 @@ public class CashMovementAdapter
             directionTextView = itemView.findViewById(R.id.DirectionTextView);
             amountTextVIew = itemView.findViewById(R.id.AmountTextView);
             removeButton = itemView.findViewById(R.id.CashMovementItemRemoveButton);
+            editButton = itemView.findViewById(R.id.EditCashMovementItemButton);
         }
     }
 }
