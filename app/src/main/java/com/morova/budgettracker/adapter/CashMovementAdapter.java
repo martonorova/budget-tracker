@@ -23,14 +23,11 @@ public class CashMovementAdapter
 
     private List<CashMovementItem> items = new ArrayList<>();
     private Map<Long, Category> categoryMap = new HashMap<>();
+    private OnItemClickListener listener;
 
-//    private CashMovementItemClickListener listener;
-
-//    public CashMovementAdapter(CashMovementItemClickListener listener) {
-////        this.listener = listener;
-//        items = new ArrayList<>();
-//        categoryMap = new HashMap<>();
-//    }
+    public CashMovementAdapter(OnItemClickListener listener) {
+        this.listener = listener;
+    }
 
     @NonNull
     @Override
@@ -59,19 +56,10 @@ public class CashMovementAdapter
         return items.size();
     }
 
-//    public void addItem(CashMovementItem cashMovementItem) {
-//        items.add(cashMovementItem);
-//        notifyItemInserted(items.size() - 1);
-//    }
-
     public void setCashMovementItems(List<CashMovementItem> cashMovementItems) {
         items = cashMovementItems;
         notifyDataSetChanged();
     }
-
-//    public void addCategory(Category category) {
-//        categoryMap.put(category.getId(), category);
-//    }
 
     public void setCategories(List<Category> categories) {
         categoryMap.clear();
@@ -81,10 +69,6 @@ public class CashMovementAdapter
         notifyDataSetChanged();
     }
 
-//    public interface CashMovementItemClickListener {
-//        void onItemChanged(CashMovementItem cashMovementItem);
-//    }
-
     class CashMovementViewHolder extends RecyclerView.ViewHolder {
 
         TextView categoryTextView;
@@ -93,13 +77,38 @@ public class CashMovementAdapter
         ImageButton removeButton;
         ImageButton editButton;
 
-        public CashMovementViewHolder(View itemView) {
+        public CashMovementViewHolder(final View itemView) {
             super(itemView);
             categoryTextView = itemView.findViewById(R.id.CategoryTextView);
             directionTextView = itemView.findViewById(R.id.DirectionTextView);
             amountTextVIew = itemView.findViewById(R.id.AmountTextView);
-            removeButton = itemView.findViewById(R.id.CashMovementItemRemoveButton);
+            removeButton = itemView.findViewById(R.id.RemoveCashMovementItemButton);
             editButton = itemView.findViewById(R.id.EditCashMovementItemButton);
+
+            removeButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position = getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION) {
+                        listener.onItemRemoveClick(items.get(position));
+                    }
+                }
+            });
+
+            editButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position = getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION) {
+                        listener.onItemEditClick(items.get(position));
+                    }
+                }
+            });
         }
+    }
+
+    public interface OnItemClickListener {
+        void onItemRemoveClick(CashMovementItem cashMovementItem);
+        void onItemEditClick(CashMovementItem cashMovementItem);
     }
 }

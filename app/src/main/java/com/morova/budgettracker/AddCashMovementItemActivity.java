@@ -30,9 +30,16 @@ import java.util.List;
 public class AddCashMovementItemActivity extends AppCompatActivity
         implements NewCategoryDialogFragment.NewCategoryDialogListener{
 
+    public static final String EXTRA_ID = "com.morova.budgettracker.AddCashMovementItemActivity.EXTRA_ID";
+    public static final String EXTRA_AMOUNT = "com.morova.budgettracker.AddCashMovementItemActivity.EXTRA_AMOUNT";
+    public static final String EXTRA_DATE = "com.morova.budgettracker.AddCashMovementItemActivity.EXTRA_DATE";
+    public static final String EXTRA_COMMENT = "com.morova.budgettracker.AddCashMovementItemActivity.EXTRA_COMMENT";
+    public static final String EXTRA_CATEGORY_ID = "com.morova.budgettracker.AddCashMovementItemActivity.EXTRA_CATEGORY_ID";
+
+
     private List<Category> categoryList = new ArrayList<>();
 
-    private CashMovementItemViewModel cashMovementItemViewModel;
+    //private CashMovementItemViewModel cashMovementItemViewModel;
     private CategoryViewModel categoryViewModel;
 
     private Button manageCategoriesButton;
@@ -50,16 +57,6 @@ public class AddCashMovementItemActivity extends AppCompatActivity
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.add_cash_movement_item_toolbar);
         setSupportActionBar(toolbar);
-
-
-        cashMovementItemViewModel = ViewModelProviders.of(this)
-                .get(CashMovementItemViewModel.class);
-//        cashMovementItemViewModel.getAllItems().observe(this, new Observer<List<CashMovementItem>>() {
-//            @Override
-//            public void onChanged(@Nullable List<CashMovementItem> cashMovementItems) {
-//                adapter.setCashMovementItems(cashMovementItems);
-//            }
-//        });
 
         final ArrayAdapter<Category> categoryArrayAdapter = new ArrayAdapter<Category>(this,
                 R.layout.support_simple_spinner_dropdown_item, categoryList);
@@ -80,15 +77,7 @@ public class AddCashMovementItemActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 if (isValidInput()) {
-                    CashMovementItem newItem = new CashMovementItem(
-                            Integer.parseInt(amountEditText.getText().toString()),
-                            LocalDateTime.now(),
-                            commentEditText.getText().toString(),
-                            ((Category) categorySpinner.getSelectedItem()).getId()
-                    );
-
-                    cashMovementItemViewModel.insert(newItem);
-                    finish();
+                    saveItem();
 
                 } else {
                     Snackbar.make(v, "Please fill the amount",Snackbar.LENGTH_LONG).show();
@@ -100,8 +89,6 @@ public class AddCashMovementItemActivity extends AppCompatActivity
         manageCategoriesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                new NewCategoryDialogFragment()
-//                        .show(getSupportFragmentManager(), NewCategoryDialogFragment.TAG);
 
                 Intent intent = new Intent(AddCashMovementItemActivity.this, CategoryListActivity.class);
                 startActivity(intent);
@@ -119,7 +106,7 @@ public class AddCashMovementItemActivity extends AppCompatActivity
     }
 
     private boolean isValidInput() {
-        return !(amountEditText.getText().toString().isEmpty());
+        return !(amountEditText.getText().toString().trim().isEmpty());
     }
 
     @Override
@@ -151,5 +138,28 @@ public class AddCashMovementItemActivity extends AppCompatActivity
         categoryViewModel.insert(category);
         //Select the newly added category
         categorySpinner.setSelection(categoryList.size());
+    }
+
+    private void saveItem() {
+        //                    CashMovementItem newItem = new CashMovementItem(
+//                            Integer.parseInt(amountEditText.getText().toString()),
+//                            LocalDateTime.now(),
+//                            commentEditText.getText().toString(),
+//                            ((Category) categorySpinner.getSelectedItem()).getId()
+//                    );
+
+        int amount = Integer.parseInt(amountEditText.getText().toString());
+        String comment = commentEditText.getText().toString();
+        long categoryId = ((Category) categorySpinner.getSelectedItem()).getId();
+
+        Intent data = new Intent();
+        data.putExtra(EXTRA_AMOUNT, amount);
+        data.putExtra(EXTRA_DATE, LocalDateTime.now().toString());
+        data.putExtra(EXTRA_COMMENT, comment);
+        data.putExtra(EXTRA_CATEGORY_ID, categoryId);
+
+        //cashMovementItemViewModel.insert(newItem);
+        setResult(RESULT_OK, data);
+        finish();
     }
 }

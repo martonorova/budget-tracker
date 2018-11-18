@@ -3,6 +3,7 @@ package com.morova.budgettracker;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.icu.text.UnicodeSetSpanner;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -15,6 +16,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.morova.budgettracker.adapter.CashMovementAdapter;
 import com.morova.budgettracker.data.BudgetTrackerDatabase;
@@ -23,19 +25,19 @@ import com.morova.budgettracker.data.entities.Category;
 import com.morova.budgettracker.data.viewmodels.CashMovementItemViewModel;
 import com.morova.budgettracker.data.viewmodels.CategoryViewModel;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity/* implements
-        CashMovementAdapter.CashMovementItemClickListener*/ {
+public class MainActivity extends AppCompatActivity
+        implements CashMovementAdapter.OnItemClickListener {
+
+    public static final int ADD_CASH_MOV_ITEM_REQUEST = 1;
+    public static final int EDIT_CASH_MOV_ITEM_REQUEST = 2;
 
             ///TODO create resources where possible
 
     private CashMovementItemViewModel cashMovementItemViewModel;
     private CategoryViewModel categoryViewModel;
-
-//    private RecyclerView recyclerView;
-
-//    private BudgetTrackerDatabase database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,59 +82,44 @@ public class MainActivity extends AppCompatActivity/* implements
             public void onClick(View view) {
 
                 Intent intent = new Intent(MainActivity.this, AddCashMovementItemActivity.class);
-                startActivity(intent);
-
-                //TODO implement
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
+                startActivityForResult(intent, ADD_CASH_MOV_ITEM_REQUEST);
             }
         });
-
-//        database = BudgetTrackerDatabase.getInstance(getApplicationContext());
     }
 
-//    private void initRecyclerView() {
-//        recyclerView = findViewById(R.id.MainRecyclerView);
-//        adapter = new CashMovementAdapter(this);
-//        loadItemsInBackground();
-//        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-//        recyclerView.setAdapter(adapter);
-//    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
-//    private void loadItemsInBackground() {
-//
-//        //CashMovementItems
-//
-//        new AsyncTask<Void, Void, List<CashMovementItem>>() {
-//            @Override
-//            protected List<CashMovementItem> doInBackground(Void... voids) {
-//                return database.cashMovementItemDao().getAllItems();
-//            }
-//
-//            @Override
-//            protected void onPostExecute(List<CashMovementItem> cashMovementItems) {
-//                adapter.updateCashMovementItems(cashMovementItems);
-//            }
-//        }.execute();
-//
-//
-//        //Categories
-//
-//        new AsyncTask<Void, Void, List<Category>>() {
-//            @Override
-//            protected List<Category> doInBackground(Void... voids) {
-//                return database.categoryDao().getAll();
-//            }
-//
-//            @Override
-//            protected void onPostExecute(List<Category> categories) {
-//                adapter.updateCategories(categories);
-//            }
-//        }.execute();
-//
-//
-//
-//    }
+        if (requestCode == ADD_CASH_MOV_ITEM_REQUEST && resultCode == RESULT_OK) {
+            int amount = data.getIntExtra(AddCashMovementItemActivity.EXTRA_AMOUNT, -1);
+            LocalDateTime dateTime = LocalDateTime.parse(
+                    data.getStringExtra(AddCashMovementItemActivity.EXTRA_DATE));
+            String comment = data.getStringExtra(AddCashMovementItemActivity.EXTRA_COMMENT);
+            long categoryId = data.getLongExtra(AddCashMovementItemActivity.EXTRA_CATEGORY_ID, -1);
+
+            CashMovementItem newItem = new CashMovementItem(
+                    amount,
+                    dateTime,
+                    comment,
+                    categoryId
+            );
+
+            if (amount == -1 || categoryId == -1) {
+                Toast.makeText(
+                        this,"Item cannot be saved, wrong amount or categoryId",
+                        Toast.LENGTH_LONG)
+                        .show();
+            } else {
+                cashMovementItemViewModel.insert(newItem);
+                Toast.makeText(this, "Item saved", Toast.LENGTH_LONG).show();
+            }
+        }  else {
+            Toast.makeText(this, "Item not saved", Toast.LENGTH_LONG)
+                    .show();
+        }
+
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -156,8 +143,13 @@ public class MainActivity extends AppCompatActivity/* implements
         return super.onOptionsItemSelected(item);
     }
 
-//    @Override
-//    public void onItemChanged(CashMovementItem cashMovementItem) {
-//
-//    }
+    @Override
+    public void onItemRemoveClick(CashMovementItem cashMovementItem) {
+        //TODO implement warn + remove
+    }
+
+    @Override
+    public void onItemEditClick(CashMovementItem cashMovementItem) {
+        //TODO implement intent to edit activity
+    }
 }
