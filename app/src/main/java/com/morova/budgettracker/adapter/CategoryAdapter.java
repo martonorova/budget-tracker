@@ -19,6 +19,12 @@ public class CategoryAdapter
 
     private List<Category> items = new ArrayList<>();
 
+    private OnItemClickListener listener;
+
+    public CategoryAdapter(OnItemClickListener listener) {
+        this.listener = listener;
+    }
+
     @NonNull
     @Override
     public CategoryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -59,14 +65,20 @@ public class CategoryAdapter
             editCategoryItemButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //TODO implementation
+                    int position = getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION) {
+                        listener.onItemEditClick(items.get(position));
+                    }
                 }
             });
 
             removeCategoryItemButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //TODO implementation
+                    int position = getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION) {
+                        listener.onItemRemoveClick(items.get(position));
+                    }
                 }
             });
         }
@@ -75,5 +87,10 @@ public class CategoryAdapter
     public void setCategoryItems(List<Category> categoryItems) {
         items = categoryItems;
         notifyDataSetChanged();
+    }
+
+    public interface OnItemClickListener {
+        void onItemRemoveClick(Category category);
+        void onItemEditClick(Category category);
     }
 }

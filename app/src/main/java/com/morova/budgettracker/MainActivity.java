@@ -90,6 +90,7 @@ public class MainActivity extends AppCompatActivity
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == ADD_CASH_MOV_ITEM_REQUEST && resultCode == RESULT_OK) {
+
             int amount = data.getIntExtra(AddEditCashMovementItemActivity.EXTRA_AMOUNT, -1);
             LocalDateTime dateTime = LocalDateTime.parse(
                     data.getStringExtra(AddEditCashMovementItemActivity.EXTRA_DATE));
@@ -154,6 +155,24 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    //TODO use this (as in categories)
+    private CashMovementItem createItemFromIntent(Intent data) {
+        int amount = data.getIntExtra(AddEditCashMovementItemActivity.EXTRA_AMOUNT, -1);
+        LocalDateTime dateTime = LocalDateTime.parse(
+                data.getStringExtra(AddEditCashMovementItemActivity.EXTRA_DATE));
+        String comment = data.getStringExtra(AddEditCashMovementItemActivity.EXTRA_COMMENT);
+        long categoryId = data.getLongExtra(AddEditCashMovementItemActivity.EXTRA_CATEGORY_ID, -1);
+
+        CashMovementItem newItem = new CashMovementItem(
+                amount,
+                dateTime,
+                comment,
+                categoryId
+        );
+
+        return newItem;
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -178,8 +197,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onItemRemoveClick(final CashMovementItem cashMovementItem) {
-        //TODO implement warn + remove
-        //AlertDialog
          AlertDialog.Builder alertBox = new AlertDialog.Builder(this);
          alertBox.setMessage(R.string.warn_delete_item);
          alertBox.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
@@ -197,7 +214,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onItemEditClick(CashMovementItem cashMovementItem) {
-        //TODO implement intent to edit activity
 
 
         Intent intent = new Intent(MainActivity.this, AddEditCashMovementItemActivity.class);

@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
         foreignKeys = @ForeignKey(entity = Category.class,
                 parentColumns = "id",
                 childColumns = "category_id",
-                onDelete = ForeignKey.SET_NULL))
+                onDelete = ForeignKey.CASCADE))
 public class CashMovementItem {
 
     @ColumnInfo(name = "id")
