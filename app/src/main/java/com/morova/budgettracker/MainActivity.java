@@ -192,6 +192,11 @@ public class MainActivity extends AppCompatActivity
             return true;
         }
 
+        if (id == R.id.action_manage_categories) {
+            Intent intent = new Intent(MainActivity.this, CategoryListActivity.class);
+            startActivity(intent);
+        }
+
         return super.onOptionsItemSelected(item);
     }
 
