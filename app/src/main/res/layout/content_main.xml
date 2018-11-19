@@ -4,6 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
@@ -11,6 +12,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/MainRecyclerView"
         android:layout_width="match_parent"
+        tools:listitem="@layout/cash_movement_item"
         android:layout_height="0dp"
         android:layout_weight="3" />
 
@@ -24,14 +26,87 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="8dp"
+            android:padding="2dp"
             android:background="#88FF22">
 
+            <!--<TextView-->
+                <!--android:id="@+id/SummaryTextView"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="SUMMARY"-->
+                <!--android:textAppearance="@style/TextAppearance.AppCompat.Large"-->
+                <!--android:layout_centerHorizontal="true"/>-->
+
             <TextView
-                android:layout_width="match_parent"
+                android:id="@+id/SpentLabelTextView"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="SUMMARY"
-                android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
+                android:layout_alignParentTop="true"
+                android:layout_alignParentStart="true"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:layout_margin="@dimen/summary_item_margin"
+                android:text="Spent:"/>
+
+            <TextView
+                android:id="@+id/SpentTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:layout_margin="@dimen/summary_item_margin"
+                android:text="40000"/>
+
+            <TextView
+                android:id="@+id/LimitLabelTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentBottom="true"
+                android:layout_margin="@dimen/summary_item_margin"
+                android:text="Limit"/>
+
+            <TextView
+                android:id="@+id/LimitTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_margin="@dimen/summary_item_margin"
+                android:text="80000"/>
+
+            <!--<TextView-->
+                <!--android:id="@+id/BalanceLabelTextView"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="Balance:"/>-->
+
+            <!--<TextView-->
+                <!--android:id="@+id/BalanceTextView"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="40000"/>-->
+
+
+
+            <Button
+                android:id="@+id/DiagramsButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Diagrams"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_margin="@dimen/summary_item_margin"/>
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fab"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:layout_margin="@dimen/summary_item_margin"
+                app:srcCompat="@drawable/ic_add_white_36dp" />
 
         </RelativeLayout>
 
