@@ -25,6 +25,8 @@ import com.morova.budgettracker.data.viewmodels.CashMovementItemViewModel;
 import com.morova.budgettracker.data.viewmodels.CategoryViewModel;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
@@ -44,14 +46,15 @@ public class MainActivity extends AppCompatActivity
 
     private CashMovementAdapter adapter = new CashMovementAdapter(MainActivity.this);
 
+    private List<CashMovementItem> itemList = new ArrayList<>();
+    private HashMap<Long, Category> categoryMap = new HashMap<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         initContentView();
-
-
 
         RecyclerView recyclerView = findViewById(R.id.MainRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -67,7 +70,6 @@ public class MainActivity extends AppCompatActivity
         cashMovementItemViewModel = ViewModelProviders.of(this)
                 .get(CashMovementItemViewModel.class);
         cashMovementItemViewModel.getAllItems().observe(this, new CashMovementItemsObserver());
-
     }
 
     private void initContentView() {
@@ -88,17 +90,16 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-
-    //TODO summary not working when deleting a category --> bind to livedata
-
-    private void initSummary(List<CashMovementItem> cashMovementItems) {
+    private void updateSummary() {
 
         int sumSpentAmount = 0;
-        for (CashMovementItem item : cashMovementItems) {
+        for (CashMovementItem item : itemList) {
+            Category actualCategory;
 
-            Category actualCategory = categoryViewModel.getCategoryById(item.getCategoryId());
+            try {
+                actualCategory = categoryMap.get(item.getCategoryId());
 
-            if (actualCategory == null) {
+            } catch (NullPointerException ex) {
                 Toast.makeText(MainActivity.this,
                         String.format("Cannot load category for item %d", item.getId()),
                         Toast.LENGTH_LONG).show();
@@ -109,64 +110,6 @@ public class MainActivity extends AppCompatActivity
         }
 
         spentTextView.setText(String.valueOf(sumSpentAmount));
-
-    }
-
-    //used when updating an item
-    private void editSummary(CashMovementItem item) {
-
-        CashMovementItem oldItem = cashMovementItemViewModel.getItemById(item.getId());
-        if (oldItem == null) {
-            Toast.makeText(MainActivity.this,
-                    String.format("Cannot load item  %d", item.getId()),
-                    Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        removeValueFromSummary(oldItem);
-        updateSummary(item);
-    }
-
-    //used when adding new item
-    private void updateSummary(CashMovementItem item) {
-
-
-        Category editedCategory = categoryViewModel.getCategoryById(item.getCategoryId());
-        if (editedCategory == null) {
-            Toast.makeText(MainActivity.this,
-                    String.format("Cannot load category for item %d", item.getId()),
-                    Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        int itemNewAmount = item.getAmount();
-        int oldSpentSum = Integer.parseInt(spentTextView.getText().toString());
-        spentTextView.setText(String.valueOf(
-                editedCategory.getDirection().equals(Category.Direction.EXPENSE) ?
-                        oldSpentSum + itemNewAmount : oldSpentSum - itemNewAmount
-        ));
-
-    }
-
-    // this is for removing old value of deleted record
-    private void removeValueFromSummary(CashMovementItem item) {
-
-        //TODO refactor these
-        Category category = categoryViewModel.getCategoryById(item.getCategoryId());
-        if (category == null) {
-            Toast.makeText(MainActivity.this,
-                    String.format("Cannot load category for item %d", item.getId()),
-                    Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        int oldItemAmount = item.getAmount();
-        int oldSpentSum = Integer.parseInt(spentTextView.getText().toString());
-        spentTextView.setText(String.valueOf(
-                category.getDirection().equals(Category.Direction.EXPENSE) ?
-                     oldSpentSum - oldItemAmount : oldSpentSum + oldItemAmount
-        ));
-
     }
 
     @Override
@@ -175,29 +118,15 @@ public class MainActivity extends AppCompatActivity
 
         if (requestCode == ADD_CASH_MOV_ITEM_REQUEST && resultCode == RESULT_OK) {
 
-            int amount = data.getIntExtra(AddEditCashMovementItemActivity.EXTRA_AMOUNT, -1);
-            LocalDateTime dateTime = LocalDateTime.parse(
-                    data.getStringExtra(AddEditCashMovementItemActivity.EXTRA_DATE));
-            String comment = data.getStringExtra(AddEditCashMovementItemActivity.EXTRA_COMMENT);
-            long categoryId = data.getLongExtra(AddEditCashMovementItemActivity.EXTRA_CATEGORY_ID, -1);
+            CashMovementItem newItem = createItemFromIntent(data);
 
-            CashMovementItem newItem = new CashMovementItem(
-                    amount,
-                    dateTime,
-                    comment,
-                    categoryId
-            );
-
-            if (amount == -1 || categoryId == -1) {
+            if (newItem.getAmount() == -1 || newItem.getCategoryId() == -1) {
                 Toast.makeText(
                         this,"Item cannot be saved, wrong amount or categoryId",
                         Toast.LENGTH_LONG)
                         .show();
             } else {
-
-                updateSummary(newItem);
                 cashMovementItemViewModel.insert(newItem);
-
 
                 Toast.makeText(this, "Item saved", Toast.LENGTH_LONG).show();
             }
@@ -211,28 +140,15 @@ public class MainActivity extends AppCompatActivity
                 return;
             }
 
-            int amount = data.getIntExtra(AddEditCashMovementItemActivity.EXTRA_AMOUNT, -1);
-            LocalDateTime dateTime = LocalDateTime.parse(
-                    data.getStringExtra(AddEditCashMovementItemActivity.EXTRA_DATE));
-            String comment = data.getStringExtra(AddEditCashMovementItemActivity.EXTRA_COMMENT);
-            long categoryId = data.getLongExtra(AddEditCashMovementItemActivity.EXTRA_CATEGORY_ID, -1);
-
-            CashMovementItem newItem = new CashMovementItem(
-                    amount,
-                    dateTime,
-                    comment,
-                    categoryId
-            );
-
+            CashMovementItem newItem = createItemFromIntent(data);
             newItem.setId(id);
 
-            if (amount == -1 || categoryId == -1) {
+            if (newItem.getAmount() == -1 || newItem.getCategoryId() == -1) {
                 Toast.makeText(
                         this,"Item cannot be updated, wrong amount or categoryId",
                         Toast.LENGTH_LONG)
                         .show();
             } else {
-                editSummary(newItem);
                 cashMovementItemViewModel.update(newItem);
                 Toast.makeText(this, "Item updated", Toast.LENGTH_LONG).show();
             }
@@ -241,10 +157,8 @@ public class MainActivity extends AppCompatActivity
             Toast.makeText(this, "Item not saved", Toast.LENGTH_LONG)
                     .show();
         }
-
     }
 
-    //TODO use this (as in categories)
     private CashMovementItem createItemFromIntent(Intent data) {
         int amount = data.getIntExtra(AddEditCashMovementItemActivity.EXTRA_AMOUNT, -1);
         LocalDateTime dateTime = LocalDateTime.parse(
@@ -258,7 +172,6 @@ public class MainActivity extends AppCompatActivity
                 comment,
                 categoryId
         );
-
         return newItem;
     }
 
@@ -296,20 +209,15 @@ public class MainActivity extends AppCompatActivity
          alertBox.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
              @Override
              public void onClick(DialogInterface dialog, int which) {
-                 removeValueFromSummary(cashMovementItem);
                  cashMovementItemViewModel.delete(cashMovementItem);
              }
          });
          alertBox.setNeutralButton(R.string.cancel, null);
          alertBox.show();
-
-
-        //cashMovementItemViewModel.delete(cashMovementItem);
     }
 
     @Override
     public void onItemEditClick(CashMovementItem cashMovementItem) {
-
 
         Intent intent = new Intent(MainActivity.this, AddEditCashMovementItemActivity.class);
         intent.putExtra(AddEditCashMovementItemActivity.EXTRA_ID, cashMovementItem.getId());
@@ -322,24 +230,40 @@ public class MainActivity extends AppCompatActivity
     }
 
     private class CashMovementItemsObserver implements Observer<List<CashMovementItem>> {
-        boolean hasInitializedSummary = false;
-
         @Override
         public void onChanged(@Nullable List<CashMovementItem> cashMovementItems) {
-            adapter.setCashMovementItems(cashMovementItems);
 
-            if (!hasInitializedSummary) {
-                initSummary(cashMovementItems);
-                hasInitializedSummary = true;
-            }
+            adapter.setCashMovementItems(cashMovementItems);
+            setItemList(cashMovementItems);
         }
     }
 
     private class CategoryObserver implements Observer<List<Category>> {
-
         @Override
         public void onChanged(@Nullable List<Category> categories) {
+
             adapter.setCategories(categories);
+            setCategoryMap(categories);
         }
     }
+
+    private void setItemList(List<CashMovementItem> cashMovementItems) {
+        itemList.clear();
+        itemList.addAll(cashMovementItems);
+
+        updateSummary();
+    }
+
+    private void setCategoryMap(List<Category> categories) {
+        categoryMap.clear();
+        for (Category category : categories) {
+            categoryMap.put(category.getId(), category);
+        }
+
+        updateSummary();
+    }
+
+    //TODO make method for TOAST
+
+
 }

@@ -82,14 +82,6 @@ public class CategoryListActivity extends AppCompatActivity
                 return;
             }
 
-//            String name = data.getStringExtra(AddEditCategoryActivity.EXTRA_NAME);
-//            Category.Direction direction =
-//                    data.getStringExtra(AddEditCategoryActivity.EXTRA_DIRECTION)
-//                            .equals(Category.Direction.INCOME.toString()) ?
-//                            Category.Direction.INCOME : Category.Direction.EXPENSE;
-//
-//            Category category = new Category(name, direction);
-
             Category category = createCategoryFromIntent(data);
 
             category.setId(id);
