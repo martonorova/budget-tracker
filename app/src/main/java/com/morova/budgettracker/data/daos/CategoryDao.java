@@ -17,6 +17,9 @@ public interface CategoryDao {
     @Query("SELECT * FROM category_table")
     LiveData<List<Category>> getAllCategories();
 
+    @Query("SELECT * FROM category_table WHERE id = :id")
+    Category getCategoryById(Long id);
+
     @Insert
     long insert(Category category);
 

@@ -19,6 +19,9 @@ public interface CashMovementItemDao {
     @Query("SELECT * FROM cash_movement_item_table")
     LiveData<List<CashMovementItem>> getAllItems();
 
+    @Query("SELECT * FROM cash_movement_item_table WHERE id = :id")
+    CashMovementItem getItemById(Long id);
+
     @Insert
     long insert(CashMovementItem cashMovementItem);
 

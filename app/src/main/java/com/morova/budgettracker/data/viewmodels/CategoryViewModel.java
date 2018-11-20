@@ -21,6 +21,10 @@ public class CategoryViewModel extends AndroidViewModel {
         allCategories = repository.getAllCategories();
     }
 
+    public Category getCategoryById(Long id) {
+        return repository.getCategoryById(id);
+    }
+
     public void insert(Category category) {
         repository.insert(category);
     }

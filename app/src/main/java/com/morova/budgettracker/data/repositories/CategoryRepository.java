@@ -10,6 +10,7 @@ import com.morova.budgettracker.data.entities.Category;
 import com.morova.budgettracker.data.daos.CategoryDao;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class CategoryRepository {
     private CategoryDao categoryDao;
@@ -19,6 +20,17 @@ public class CategoryRepository {
         BudgetTrackerDatabase database = BudgetTrackerDatabase.getInstance(application);
         categoryDao = database.categoryDao();
         allCategories = categoryDao.getAllCategories();
+    }
+
+    public Category getCategoryById(Long id) {
+        Category category = null;
+        try {
+            category = new GetCategoryByIdAsyncTask(categoryDao).execute(id).get();
+        } catch (InterruptedException|ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        return category;
     }
 
     public void insert(Category category) {
@@ -35,6 +47,20 @@ public class CategoryRepository {
 
     public LiveData<List<Category>> getAllCategories() {
         return allCategories;
+    }
+
+    private static class GetCategoryByIdAsyncTask extends AsyncTask<Long, Void, Category> {
+
+        private CategoryDao categoryDao;
+
+        private GetCategoryByIdAsyncTask(CategoryDao categoryDao) {
+            this.categoryDao = categoryDao;
+        }
+
+        @Override
+        protected Category doInBackground(Long... ids) {
+            return categoryDao.getCategoryById(ids[0]);
+        }
     }
 
     private static class InsertCategoryAsyncTask extends AsyncTask<Category, Void, Void> {

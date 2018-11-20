@@ -15,6 +15,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.morova.budgettracker.adapter.CashMovementAdapter;
@@ -37,44 +38,46 @@ public class MainActivity extends AppCompatActivity
     private CashMovementItemViewModel cashMovementItemViewModel;
     private CategoryViewModel categoryViewModel;
 
+    private FloatingActionButton fab;
+    private TextView spentTextView;
+    private TextView limitTextView;
+
+    private CashMovementAdapter adapter = new CashMovementAdapter(MainActivity.this);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        initContentView();
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+
 
         RecyclerView recyclerView = findViewById(R.id.MainRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
 
-        final CashMovementAdapter adapter = new CashMovementAdapter(this);
+
         recyclerView.setAdapter(adapter);
 
         categoryViewModel = ViewModelProviders.of(this)
                 .get(CategoryViewModel.class);
-        categoryViewModel.getAllCategories().observe(this, new Observer<List<Category>>() {
-            @Override
-            public void onChanged(@Nullable List<Category> categories) {
-                adapter.setCategories(categories);
-            }
-        });
+        categoryViewModel.getAllCategories().observe(this, new CategoryObserver());
 
         cashMovementItemViewModel = ViewModelProviders.of(this)
                 .get(CashMovementItemViewModel.class);
-        cashMovementItemViewModel.getAllItems().observe(this, new Observer<List<CashMovementItem>>() {
-            @Override
-            public void onChanged(@Nullable List<CashMovementItem> cashMovementItems) {
-                adapter.setCashMovementItems(cashMovementItems);
-            }
-        });
+        cashMovementItemViewModel.getAllItems().observe(this, new CashMovementItemsObserver());
 
+    }
 
+    private void initContentView() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
+        spentTextView = findViewById(R.id.SpentTextView);
+        limitTextView = findViewById(R.id.LimitTextView);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -85,8 +88,85 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-    private void initContentView() {
-        
+
+    //TODO summary not working when deleting a category --> bind to livedata
+
+    private void initSummary(List<CashMovementItem> cashMovementItems) {
+
+        int sumSpentAmount = 0;
+        for (CashMovementItem item : cashMovementItems) {
+
+            Category actualCategory = categoryViewModel.getCategoryById(item.getCategoryId());
+
+            if (actualCategory == null) {
+                Toast.makeText(MainActivity.this,
+                        String.format("Cannot load category for item %d", item.getId()),
+                        Toast.LENGTH_LONG).show();
+                continue;
+            }
+            sumSpentAmount += actualCategory.getDirection().equals(Category.Direction.EXPENSE) ?
+                            item.getAmount() : 0;
+        }
+
+        spentTextView.setText(String.valueOf(sumSpentAmount));
+
+    }
+
+    //used when updating an item
+    private void editSummary(CashMovementItem item) {
+
+        CashMovementItem oldItem = cashMovementItemViewModel.getItemById(item.getId());
+        if (oldItem == null) {
+            Toast.makeText(MainActivity.this,
+                    String.format("Cannot load item  %d", item.getId()),
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        removeValueFromSummary(oldItem);
+        updateSummary(item);
+    }
+
+    //used when adding new item
+    private void updateSummary(CashMovementItem item) {
+
+
+        Category editedCategory = categoryViewModel.getCategoryById(item.getCategoryId());
+        if (editedCategory == null) {
+            Toast.makeText(MainActivity.this,
+                    String.format("Cannot load category for item %d", item.getId()),
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        int itemNewAmount = item.getAmount();
+        int oldSpentSum = Integer.parseInt(spentTextView.getText().toString());
+        spentTextView.setText(String.valueOf(
+                editedCategory.getDirection().equals(Category.Direction.EXPENSE) ?
+                        oldSpentSum + itemNewAmount : oldSpentSum - itemNewAmount
+        ));
+
+    }
+
+    // this is for removing old value of deleted record
+    private void removeValueFromSummary(CashMovementItem item) {
+
+        //TODO refactor these
+        Category category = categoryViewModel.getCategoryById(item.getCategoryId());
+        if (category == null) {
+            Toast.makeText(MainActivity.this,
+                    String.format("Cannot load category for item %d", item.getId()),
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        int oldItemAmount = item.getAmount();
+        int oldSpentSum = Integer.parseInt(spentTextView.getText().toString());
+        spentTextView.setText(String.valueOf(
+                category.getDirection().equals(Category.Direction.EXPENSE) ?
+                     oldSpentSum - oldItemAmount : oldSpentSum + oldItemAmount
+        ));
+
     }
 
     @Override
@@ -114,7 +194,11 @@ public class MainActivity extends AppCompatActivity
                         Toast.LENGTH_LONG)
                         .show();
             } else {
+
+                updateSummary(newItem);
                 cashMovementItemViewModel.insert(newItem);
+
+
                 Toast.makeText(this, "Item saved", Toast.LENGTH_LONG).show();
             }
         } else if (requestCode == EDIT_CASH_MOV_ITEM_REQUEST && resultCode == RESULT_OK) {
@@ -148,6 +232,7 @@ public class MainActivity extends AppCompatActivity
                         Toast.LENGTH_LONG)
                         .show();
             } else {
+                editSummary(newItem);
                 cashMovementItemViewModel.update(newItem);
                 Toast.makeText(this, "Item updated", Toast.LENGTH_LONG).show();
             }
@@ -211,6 +296,7 @@ public class MainActivity extends AppCompatActivity
          alertBox.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
              @Override
              public void onClick(DialogInterface dialog, int which) {
+                 removeValueFromSummary(cashMovementItem);
                  cashMovementItemViewModel.delete(cashMovementItem);
              }
          });
@@ -233,5 +319,27 @@ public class MainActivity extends AppCompatActivity
         intent.putExtra(AddEditCashMovementItemActivity.EXTRA_CATEGORY_ID, cashMovementItem.getCategoryId());
 
         startActivityForResult(intent, EDIT_CASH_MOV_ITEM_REQUEST);
+    }
+
+    private class CashMovementItemsObserver implements Observer<List<CashMovementItem>> {
+        boolean hasInitializedSummary = false;
+
+        @Override
+        public void onChanged(@Nullable List<CashMovementItem> cashMovementItems) {
+            adapter.setCashMovementItems(cashMovementItems);
+
+            if (!hasInitializedSummary) {
+                initSummary(cashMovementItems);
+                hasInitializedSummary = true;
+            }
+        }
+    }
+
+    private class CategoryObserver implements Observer<List<Category>> {
+
+        @Override
+        public void onChanged(@Nullable List<Category> categories) {
+            adapter.setCategories(categories);
+        }
     }
 }

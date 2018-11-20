@@ -10,6 +10,7 @@ import com.morova.budgettracker.data.daos.CashMovementItemDao;
 import com.morova.budgettracker.data.entities.CashMovementItem;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class CashMovementItemRepository {
     private CashMovementItemDao cashMovementItemDao;
@@ -19,6 +20,16 @@ public class CashMovementItemRepository {
         BudgetTrackerDatabase database = BudgetTrackerDatabase.getInstance(application);
         cashMovementItemDao = database.cashMovementItemDao();
         allItems = cashMovementItemDao.getAllItems();
+    }
+
+    public CashMovementItem getItemById(Long id) {
+        CashMovementItem item = null;
+        try {
+            item = new GetItemByIdAsyncTask(cashMovementItemDao).execute(id).get();
+        } catch (InterruptedException|ExecutionException e) {
+            e.printStackTrace();
+        }
+        return item;
     }
 
     public void insert(CashMovementItem cashMovementItem) {
@@ -38,6 +49,19 @@ public class CashMovementItemRepository {
 
     public LiveData<List<CashMovementItem>> getAllItems() {
         return allItems;
+    }
+
+    private  static class GetItemByIdAsyncTask extends AsyncTask<Long, Void, CashMovementItem> {
+
+        private CashMovementItemDao cashMovementItemDao;
+
+        private GetItemByIdAsyncTask(CashMovementItemDao cashMovementItemDao) {
+            this.cashMovementItemDao = cashMovementItemDao;
+        }
+        @Override
+        protected CashMovementItem doInBackground(Long... ids) {
+            return cashMovementItemDao.getItemById(ids[0]);
+        }
     }
 
     private static class InsertCashMovementItemAsyncTask

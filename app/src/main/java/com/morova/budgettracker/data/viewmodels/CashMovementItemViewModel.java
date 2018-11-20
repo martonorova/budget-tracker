@@ -21,6 +21,10 @@ public class CashMovementItemViewModel extends AndroidViewModel {
         allItems = repository.getAllItems();
     }
 
+    public CashMovementItem getItemById(Long id) {
+        return repository.getItemById(id);
+    }
+
     public void insert(CashMovementItem cashMovementItem) {
         repository.insert(cashMovementItem);
     }
