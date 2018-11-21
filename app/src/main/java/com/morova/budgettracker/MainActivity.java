@@ -1,12 +1,16 @@
 package com.morova.budgettracker;
 
+import android.app.ActivityManager;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,6 +19,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +28,7 @@ import com.morova.budgettracker.data.entities.CashMovementItem;
 import com.morova.budgettracker.data.entities.Category;
 import com.morova.budgettracker.data.viewmodels.CashMovementItemViewModel;
 import com.morova.budgettracker.data.viewmodels.CategoryViewModel;
+import com.morova.budgettracker.fragments.SetLimitDialogFragment;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -30,12 +36,16 @@ import java.util.HashMap;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
-        implements CashMovementAdapter.OnItemClickListener {
+        implements CashMovementAdapter.OnItemClickListener, SetLimitDialogFragment.SetLimitDialogListener{
 
     public static final int ADD_CASH_MOV_ITEM_REQUEST = 1;
     public static final int EDIT_CASH_MOV_ITEM_REQUEST = 2;
 
+    public static final String KEY_LIMIT = "com.morova.budgettracker.MainActivity.KEY_LIMIT";
+
             ///TODO create resources where possible
+
+    //TODO save limit in SharedPreference
 
     private CashMovementItemViewModel cashMovementItemViewModel;
     private CategoryViewModel categoryViewModel;
@@ -43,6 +53,7 @@ public class MainActivity extends AppCompatActivity
     private FloatingActionButton fab;
     private TextView spentTextView;
     private TextView limitTextView;
+    private Button diagramsButton;
 
     private CashMovementAdapter adapter = new CashMovementAdapter(MainActivity.this);
 
@@ -55,6 +66,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         initContentView();
+        loadLimit();
 
         RecyclerView recyclerView = findViewById(R.id.MainRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -78,6 +90,14 @@ public class MainActivity extends AppCompatActivity
 
         spentTextView = findViewById(R.id.SpentTextView);
         limitTextView = findViewById(R.id.LimitTextView);
+        diagramsButton = findViewById(R.id.DiagramsButton);
+        diagramsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, DiagramsActivity.class);
+                startActivity(intent);
+            }
+        });
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -197,6 +217,13 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.action_manage_categories) {
             Intent intent = new Intent(MainActivity.this, CategoryListActivity.class);
             startActivity(intent);
+            return true;
+        }
+
+        if (id == R.id.action_set_limit) {
+            new SetLimitDialogFragment()
+                    .show(getSupportFragmentManager(), SetLimitDialogFragment.TAG);
+            return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -259,8 +286,34 @@ public class MainActivity extends AppCompatActivity
         for (Category category : categories) {
             categoryMap.put(category.getId(), category);
         }
-
         updateSummary();
+    }
+
+    @Override
+    public void onLimitSet(int limit) {
+        limitTextView.setText(String.valueOf(limit));
+        saveLimit(limit);
+    }
+
+    private void loadLimit() {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(this);
+        int limit = sharedPreferences.getInt(KEY_LIMIT, 100000);
+
+        if (limit == 100000) {
+            Toast.makeText(this, getString(R.string.warn_limit_not_loaded), Toast.LENGTH_LONG);
+        }
+
+        limitTextView.setText(String.valueOf(limit));
+    }
+
+    private void saveLimit(int limit) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt(KEY_LIMIT, limit);
+
+        editor.apply();
     }
 
     //TODO make method for TOAST

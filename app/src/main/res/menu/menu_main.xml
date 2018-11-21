@@ -13,5 +13,11 @@
         android:title="@string/manage_categories"
         app:showAsAction="never"
         />
+    <item
+        android:id="@+id/action_set_limit"
+        android:orderInCategory="45"
+        android:title="@string/set_limit"
+        app:showAsAction="never"
+        />
 
 </menu>

@@ -28,7 +28,8 @@
         <activity
             android:name=".CategoryListActivity"
             android:label="Categories" />
-        <activity android:name=".AddEditCategoryActivity"></activity>
+        <activity android:name=".AddEditCategoryActivity" />
+        <activity android:name=".DiagramsActivity"></activity>
     </application>
 
 </manifest>

@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AddEditCashMovementItemActivity extends AppCompatActivity
-        implements NewCategoryDialogFragment.NewCategoryDialogListener{
+        /*implements NewCategoryDialogFragment.NewCategoryDialogListener*/{
 
     public static final String EXTRA_ID = "com.morova.budgettracker.AddEditCashMovementItemActivity.EXTRA_ID";
     public static final String EXTRA_AMOUNT = "com.morova.budgettracker.AddEditCashMovementItemActivity.EXTRA_AMOUNT";
@@ -170,13 +170,13 @@ public class AddEditCashMovementItemActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onCategoryCreated(Category category) {
-        Toast.makeText(this, "Create category", Toast.LENGTH_LONG).show();
-        categoryViewModel.insert(category);
-        //Select the newly added category
-        categorySpinner.setSelection(categoryList.size());
-    }
+//    @Override
+//    public void onCategoryCreated(Category category) {
+//        Toast.makeText(this, "Create category", Toast.LENGTH_LONG).show();
+//        categoryViewModel.insert(category);
+//        //Select the newly added category
+//        categorySpinner.setSelection(categoryList.size());
+//    }
 
     private void saveItem() {
 

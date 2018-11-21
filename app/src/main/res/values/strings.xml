@@ -29,4 +29,7 @@
     <string name="category_cannot_be_updated">Category cannot be updated</string>
     <string name="warn_delete_category">Are you sure you want to delete this category?
         All items related to this category will be deleted!</string>
+    <string name="set_limit">Set limit</string>
+    <string name="new_limit">New limit</string>
+    <string name="warn_limit_not_loaded">Could not load limit, setting default value</string>
 </resources>
