@@ -32,4 +32,5 @@
     <string name="set_limit">Set limit</string>
     <string name="new_limit">New limit</string>
     <string name="warn_limit_not_loaded">Could not load limit, setting default value</string>
+    <string name="notifications">Notifications</string>
 </resources>

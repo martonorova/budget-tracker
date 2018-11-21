@@ -43,9 +43,7 @@ public class MainActivity extends AppCompatActivity
 
     public static final String KEY_LIMIT = "com.morova.budgettracker.MainActivity.KEY_LIMIT";
 
-            ///TODO create resources where possible
-
-    //TODO save limit in SharedPreference
+    ///TODO create resources where possible
 
     private CashMovementItemViewModel cashMovementItemViewModel;
     private CategoryViewModel categoryViewModel;
@@ -223,6 +221,11 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.action_set_limit) {
             new SetLimitDialogFragment()
                     .show(getSupportFragmentManager(), SetLimitDialogFragment.TAG);
+            return true;
+        }
+
+        if (id == R.id.action_manage_notifications) {
+            //TODO implement
             return true;
         }
 

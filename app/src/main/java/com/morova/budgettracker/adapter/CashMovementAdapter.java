@@ -1,6 +1,5 @@
 package com.morova.budgettracker.adapter;
 
-
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -46,9 +45,8 @@ public class CashMovementAdapter
         holder.categoryTextView.setText(actualCategory.getName());
         holder.directionTextView.setText(actualCategory.getDirection().toString());
         holder.amountTextVIew.setText(String.valueOf(item.getAmount()));
+        holder.dateTextView.setText(item.getDateTime().toString());
         //TODO item.getComment()
-
-//        holder.item = item;
     }
 
     @Override
@@ -74,6 +72,7 @@ public class CashMovementAdapter
         TextView categoryTextView;
         TextView directionTextView;
         TextView amountTextVIew;
+        TextView dateTextView;
         ImageButton removeButton;
         ImageButton editButton;
 
@@ -82,6 +81,7 @@ public class CashMovementAdapter
             categoryTextView = itemView.findViewById(R.id.CategoryTextView);
             directionTextView = itemView.findViewById(R.id.DirectionTextView);
             amountTextVIew = itemView.findViewById(R.id.AmountTextView);
+            dateTextView = itemView.findViewById(R.id.DateTextView);
             removeButton = itemView.findViewById(R.id.RemoveCashMovementItemButton);
             editButton = itemView.findViewById(R.id.EditCashMovementItemButton);
 
