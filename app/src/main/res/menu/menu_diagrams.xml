@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_expenses_diagram"
+        android:title="@string/expenses_diagram"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/action_income_diagram"
+        android:title="@string/income_diagram"
+        app:showAsAction="never"/>
+
+</menu>

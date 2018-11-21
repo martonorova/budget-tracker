@@ -33,4 +33,7 @@
     <string name="new_limit">New limit</string>
     <string name="warn_limit_not_loaded">Could not load limit, setting default value</string>
     <string name="notifications">Notifications</string>
+    <string name="title_activity_tmp_diagrams">tmpDiagrams</string>
+    <string name="expenses_diagram">Expenses diagram</string>
+    <string name="income_diagram">Income diagram</string>
 </resources>

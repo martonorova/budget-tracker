@@ -29,7 +29,10 @@
             android:name=".CategoryListActivity"
             android:label="Categories" />
         <activity android:name=".AddEditCategoryActivity" />
-        <activity android:name=".DiagramsActivity"></activity>
+        <activity
+            android:name=".DiagramsActivity"
+            android:label="@string/title_activity_tmp_diagrams"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
