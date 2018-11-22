@@ -47,7 +47,7 @@ public class DiagramsActivity extends AppCompatActivity {
     private boolean categoryMapInitalized = false;
 
     //TODO filter functions
-    //TODO create two fragments with viewpagers for the two diagrams
+    //TODO style diagram
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +80,8 @@ public class DiagramsActivity extends AppCompatActivity {
 
                 sumAmountOfDirection += item.getAmount();
 
-                entries.add(new Entry(itemTOAddIdx++, sumAmountOfDirection));
+                entries.add(new Entry(itemTOAddIdx, sumAmountOfDirection));
+                itemTOAddIdx++;
             }
         }
 
@@ -97,6 +98,7 @@ public class DiagramsActivity extends AppCompatActivity {
                         R.color.expense_color : R.color.income_color);
         LineData lineData = new LineData(dataSet);
         mainLineChart.setData(lineData);
+        mainLineChart.notifyDataSetChanged();
         mainLineChart.invalidate();
 
     }
@@ -131,7 +133,12 @@ public class DiagramsActivity extends AppCompatActivity {
 
         @Override
         public String getFormattedValue(float value, AxisBase axis) {
-            return labels.get((int) value);
+
+            int index = (int) value;
+            if (index >= 0 && index < labels.size()) {
+                return labels.get(index);
+            }
+            return "NO DATE";
         }
     }
 
