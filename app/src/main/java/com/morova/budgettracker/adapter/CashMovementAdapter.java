@@ -12,6 +12,9 @@ import com.morova.budgettracker.R;
 import com.morova.budgettracker.data.entities.CashMovementItem;
 import com.morova.budgettracker.data.entities.Category;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -45,8 +48,10 @@ public class CashMovementAdapter
         holder.categoryTextView.setText(actualCategory.getName());
         holder.directionTextView.setText(actualCategory.getDirection().toString());
         holder.amountTextVIew.setText(String.valueOf(item.getAmount()));
-        holder.dateTextView.setText(item.getDateTime().toString());
-        //TODO item.getComment()
+
+        LocalDateTime localDateTime = item.getDateTime();
+        String dateTimeText = localDateTime.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT));
+        holder.dateTextView.setText(dateTimeText);
     }
 
     @Override

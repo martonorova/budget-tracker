@@ -1,5 +1,6 @@
 package com.morova.budgettracker;
 
+import android.app.Notification;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
@@ -9,6 +10,8 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -56,10 +59,14 @@ public class MainActivity extends AppCompatActivity
     private List<CashMovementItem> itemList = new ArrayList<>();
     private HashMap<Long, Category> categoryMap = new HashMap<>();
 
+    private NotificationManagerCompat notificationManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        notificationManager = NotificationManagerCompat.from(this);
 
         initContentView();
         loadLimit();
@@ -126,6 +133,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         spentTextView.setText(String.valueOf(sumSpentAmount));
+        checkLimit(sumSpentAmount);
     }
 
     @Override
@@ -204,11 +212,7 @@ public class MainActivity extends AppCompatActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
+        //TODO switch
 
         if (id == R.id.action_manage_categories) {
             Intent intent = new Intent(MainActivity.this, CategoryListActivity.class);
@@ -315,6 +319,33 @@ public class MainActivity extends AppCompatActivity
         editor.putInt(KEY_LIMIT, limit);
 
         editor.apply();
+    }
+
+    private void checkLimit(int sumSpentAmount) {
+        int limit = Integer.parseInt(limitTextView.getText().toString().trim());
+
+        if (sumSpentAmount >= limit) {
+            Notification notification = new Notification.Builder(this, App.CHANNEL_ID)
+                    .setSmallIcon(R.drawable.ic_warning_black)
+                    .setContentTitle("Limit warning")
+                    .setContentText(String.format("You crossed the %d limit!", limit))
+                    //.setPriority(Notification.PRIORITY_DEFAULT)
+                    .build();
+
+            notificationManager.notify(1, notification);
+            return;
+        }
+
+        if (sumSpentAmount >= (limit * 0.8)) {
+            Notification notification = new Notification.Builder(this, App.CHANNEL_ID)
+                    .setSmallIcon(R.drawable.ic_warning_black)
+                    .setContentTitle("Limit warning")
+                    .setContentText(String.format("You got close to the %d limit!", limit))
+                    //.setPriority(Notification.PRIORITY_DEFAULT)
+                    .build();
+
+            notificationManager.notify(1, notification);
+        }
     }
 
     //TODO make method for TOAST
