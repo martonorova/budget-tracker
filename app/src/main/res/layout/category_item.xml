@@ -3,14 +3,15 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_marginEnd="8dp"
-    android:layout_marginStart="8dp"
-    android:layout_marginTop="8dp">
+    android:layout_marginEnd="@dimen/recycler_view_margin"
+    android:layout_marginStart="@dimen/recycler_view_margin"
+    android:layout_marginTop="@dimen/recycler_view_margin">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="8dp">
+        android:padding="@dimen/list_item_padding"
+        android:background="@color/item_color">
 
         <TextView
             android:id="@+id/CategoryNameTextView"
@@ -18,16 +19,18 @@
             android:layout_height="wrap_content"
             tools:text="CategoryName"
             android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"/>
+            android:layout_centerVertical="true"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
 
         <TextView
             android:id="@+id/CategoryDirectionTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             tools:text="Direction"
-            android:layout_marginStart="30dp"
+            android:layout_marginStart="10dp"
             android:layout_toEndOf="@+id/CategoryNameTextView"
-            android:layout_centerVertical="true"/>
+            android:layout_centerVertical="true"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
 
         <ImageButton
             android:id="@+id/EditCategoryItemButton"

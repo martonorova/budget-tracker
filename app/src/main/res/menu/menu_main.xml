@@ -14,10 +14,4 @@
         android:title="@string/set_limit"
         app:showAsAction="never"
         />
-    <item
-        android:id="@+id/action_manage_notifications"
-        android:title="@string/notifications"
-        app:showAsAction="never"
-        />
-
 </menu>

@@ -111,5 +111,4 @@ public class CashMovementItemRepository {
             return null;
         }
     }
-
 }

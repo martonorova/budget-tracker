@@ -16,10 +16,7 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
-import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
 import com.jjoe64.graphview.series.DataPoint;
-import com.jjoe64.graphview.series.LineGraphSeries;
 import com.morova.budgettracker.data.entities.CashMovementItem;
 import com.morova.budgettracker.data.entities.Category;
 import com.morova.budgettracker.data.viewmodels.CashMovementItemViewModel;
@@ -27,8 +24,6 @@ import com.morova.budgettracker.data.viewmodels.CategoryViewModel;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -44,10 +39,7 @@ public class DiagramsActivity extends AppCompatActivity {
     private HashMap<Long, Category> categoryMap = new HashMap<>();
 
     private Category.Direction typeOfChartToShow = Category.Direction.EXPENSE;
-    private boolean categoryMapInitalized = false;
-
-    //TODO filter functions
-    //TODO style diagram
+    private boolean categoryMapInitialized = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,19 +47,20 @@ public class DiagramsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_diagrams);
 
         initContentView();
+        initViewModels();
+    }
 
-        categoryViewModel = ViewModelProviders.of(this)
+    private void initViewModels() {
+        categoryViewModel = ViewModelProviders.of(DiagramsActivity.this)
                 .get(CategoryViewModel.class);
-        categoryViewModel.getAllCategories().observe(this, new DiagramsActivity.CategoryObserver());
+        categoryViewModel.getAllCategories().observe(DiagramsActivity.this, new DiagramsActivity.CategoryObserver());
 
-        cashMovementItemViewModel = ViewModelProviders.of(this)
+        cashMovementItemViewModel = ViewModelProviders.of(DiagramsActivity.this)
                 .get(CashMovementItemViewModel.class);
-        cashMovementItemViewModel.getAllItems().observe(this, new DiagramsActivity.CashMovementItemsObserver());
+        cashMovementItemViewModel.getAllItems().observe(DiagramsActivity.this, new DiagramsActivity.CashMovementItemsObserver());
     }
 
     private void updateChart(Category.Direction direction) {
-        //mainLineChart.clear();
-        //mainLineChart.clearValues();
 
         List<Entry> entries = new ArrayList<>();
         int sumAmountOfDirection = 0;
@@ -138,50 +131,11 @@ public class DiagramsActivity extends AppCompatActivity {
             if (index >= 0 && index < labels.size()) {
                 return labels.get(index);
             }
-            return "NO DATE";
+            return getString(R.string.no_date);
         }
-    }
-
-//    private void updateGraphView() {
-//
-//        DataPoint[] dataPoints = getDataPointsFromList(itemList, Category.Direction.EXPENSE);
-//
-//        LineGraphSeries<DataPoint> series = new LineGraphSeries<>(
-//                dataPoints
-//        );
-//        mainGraphView.addSeries(series);
-//
-//        mainGraphView.getGridLabelRenderer().setLabelFormatter(
-//                new DateAsXAxisLabelFormatter(this)
-//        );
-//    }
-
-    private DataPoint[] getDataPointsFromList(List<CashMovementItem> cashMovementItems, Category.Direction direction) {
-        List<DataPoint> series = new ArrayList<>();
-        int sumDirection = 0;
-
-        for (CashMovementItem item : cashMovementItems) {
-
-            if (categoryMap.get(item.getCategoryId()).getDirection()
-                    .equals(direction)) {
-
-                sumDirection += item.getAmount();
-
-                series.add(new DataPoint(
-                        convertToDate(item.getDateTime()),
-                        sumDirection));
-            }
-        }
-
-        return series.toArray(new DataPoint[series.size()]);
-    }
-
-    private java.util.Date convertToDate(LocalDateTime dateTime) {
-        return java.util.Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant());
     }
 
     private void initContentView() {
-       // mainGraphView = findViewById(R.id.MainGraphView);
         mainLineChart = findViewById(R.id.MainLineChart);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_diagrams);
         setSupportActionBar(toolbar);
@@ -203,8 +157,7 @@ public class DiagramsActivity extends AppCompatActivity {
         @Override
         public void onChanged(@Nullable List<CashMovementItem> cashMovementItems) {
             setItemList(cashMovementItems);
-           // updateGraphView();
-            if (categoryMapInitalized) {
+            if (categoryMapInitialized) {
                 updateChart(typeOfChartToShow);
             }
         }
@@ -214,7 +167,7 @@ public class DiagramsActivity extends AppCompatActivity {
         @Override
         public void onChanged(@Nullable List<Category> categories) {
             setCategoryMap(categories);
-            categoryMapInitalized = true;
+            categoryMapInitialized = true;
         }
     }
 

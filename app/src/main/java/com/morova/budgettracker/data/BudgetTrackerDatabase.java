@@ -1,6 +1,5 @@
 package com.morova.budgettracker.data;
 
-import android.app.LoaderManager;
 import android.arch.persistence.db.SupportSQLiteDatabase;
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;
@@ -72,21 +71,21 @@ public abstract class BudgetTrackerDatabase extends RoomDatabase {
             categoryDao.insert(scholarship);
             categoryDao.insert(allowance);
 
-            //CashMovementItems
+            //Initial CashMovementItems
 
-            cashMovementItemDao.insert(new CashMovementItem(
-                    1000,
-                    LocalDateTime.now(),
-                    "comment 1",
-                    (long)4
-            ));
+            String comment = "Example comment";
 
-            cashMovementItemDao.insert(new CashMovementItem(
-                    353,
-                    LocalDateTime.now(),
-                    "comment 2",
-                    (long)1
-            ));
+            for (int i = 1; i <= 8; ++i) {
+                cashMovementItemDao.insert(
+                        new CashMovementItem(
+                                i*250,
+                                LocalDateTime.now(),
+                                comment + String.valueOf(i),
+                                (long)((i%4) + 1)
+                        )
+                );
+            }
+
 
             return null;
         }

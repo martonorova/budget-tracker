@@ -3,15 +3,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginEnd="8dp"
-    android:layout_marginStart="8dp"
-    android:layout_marginTop="8dp">
+    android:layout_marginEnd="@dimen/recycler_view_margin"
+    android:layout_marginStart="@dimen/recycler_view_margin"
+    android:layout_marginTop="@dimen/recycler_view_margin">
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="8dp">
+        android:padding="@dimen/list_item_padding"
+        android:background="@color/item_color">
 
         <TextView
             android:id="@+id/CategoryTextView"
@@ -21,7 +22,8 @@
             android:layout_marginEnd="10dp"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            tools:text="CAT_shopping" />
+            tools:text="CAT_shopping"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
 
         <TextView
             android:id="@+id/DirectionTextView"
@@ -38,7 +40,8 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
             android:layout_toEndOf="@+id/CategoryTextView"
-            tools:text="Amount 10000" />
+            tools:text="Amount 10000"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
 
         <TextView
             android:id="@+id/DateTextView"

@@ -15,11 +15,9 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import com.morova.budgettracker.data.entities.Category;
 import com.morova.budgettracker.data.viewmodels.CategoryViewModel;
-import com.morova.budgettracker.fragments.NewCategoryDialogFragment;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -42,7 +40,6 @@ public class AddEditCashMovementItemActivity extends AppCompatActivity
     private EditText commentEditText;
     private Spinner categorySpinner;
     private Button saveItemButton;
-    // TODO create private methods
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +60,7 @@ public class AddEditCashMovementItemActivity extends AppCompatActivity
 
         if (intent.hasExtra(EXTRA_ID)) {
 
-            setTitle("Edit item");
+            setTitle(getString(R.string.edit_item));
             amountEditText.setText(String.valueOf(intent.getIntExtra(EXTRA_AMOUNT, -1)));
             commentEditText.setText(intent.getStringExtra(EXTRA_COMMENT));
 //            categorySpinner.setSelection(
@@ -72,7 +69,7 @@ public class AddEditCashMovementItemActivity extends AppCompatActivity
 
             categoryIdtmp = intent.getLongExtra(EXTRA_CATEGORY_ID, -1);
         } else {
-            setTitle("Add new item");
+            setTitle(getString(R.string.add_new_item));
         }
 
         final long categoryId = categoryIdtmp;
@@ -169,14 +166,6 @@ public class AddEditCashMovementItemActivity extends AppCompatActivity
 
         return super.onOptionsItemSelected(item);
     }
-
-//    @Override
-//    public void onCategoryCreated(Category category) {
-//        Toast.makeText(this, "Create category", Toast.LENGTH_LONG).show();
-//        categoryViewModel.insert(category);
-//        //Select the newly added category
-//        categorySpinner.setSelection(categoryList.size());
-//    }
 
     private void saveItem() {
 

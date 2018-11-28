@@ -33,7 +33,23 @@
     <string name="new_limit">New limit</string>
     <string name="warn_limit_not_loaded">Could not load limit, setting default value</string>
     <string name="notifications">Notifications</string>
-    <string name="title_activity_tmp_diagrams">tmpDiagrams</string>
+    <string name="title_activity_tmp_diagrams">Diagrams</string>
     <string name="expenses_diagram">Expenses diagram</string>
     <string name="income_diagram">Income diagram</string>
+    <string name="no_date">NO DATE</string>
+    <string name="edit_item">Edit item</string>
+    <string name="add_new_item">Add new item</string>
+    <string name="limit_warning_channel_descr">A channel to warn if you spent 80% of the limit</string>
+    <string name="category_load_error">Cannot load category for item %d</string>
+    <string name="item_save_error">Item cannot be saved, wrong amount or categoryId</string>
+    <string name="item_saved">Item saved</string>
+    <string name="item_update_error">Item cannot be updated.</string>
+    <string name="item_updated">Item updated</string>
+    <string name="item_not_saved">Item not saved</string>
+    <string name="limit_warning">Limit warning</string>
+    <string name="limit_cross_msg_format">You crossed the %d limit!</string>
+    <string name="limit_close_msg_format">You got close to the %d limit!</string>
+    <string name="diagrams">Diagrams</string>
+    <string name="limit">Limit</string>
+    <string name="spent">Spent:</string>
 </resources>

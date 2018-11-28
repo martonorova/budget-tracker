@@ -14,8 +14,6 @@ import java.util.List;
 @Dao
 public interface CashMovementItemDao {
 
-    //TODO create query to filter by date created
-
     @Query("SELECT * FROM cash_movement_item_table")
     LiveData<List<CashMovementItem>> getAllItems();
 

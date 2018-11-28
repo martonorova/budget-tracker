@@ -6,7 +6,8 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    android:background="@color/list_background">
 
     <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -27,15 +28,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:padding="2dp"
-            android:background="#88FF22">
-
-            <!--<TextView-->
-                <!--android:id="@+id/SummaryTextView"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:text="SUMMARY"-->
-                <!--android:textAppearance="@style/TextAppearance.AppCompat.Large"-->
-                <!--android:layout_centerHorizontal="true"/>-->
+            android:background="@color/colorPrimary">
 
             <TextView
                 android:id="@+id/SpentLabelTextView"
@@ -45,7 +38,7 @@
                 android:layout_alignParentStart="true"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large"
                 android:layout_margin="@dimen/summary_item_margin"
-                android:text="Spent:"/>
+                android:text="@string/spent"/>
 
             <TextView
                 android:id="@+id/SpentTextView"
@@ -54,7 +47,7 @@
                 android:layout_centerHorizontal="true"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large"
                 android:layout_margin="@dimen/summary_item_margin"
-                android:text="40000"/>
+                tools:text="45454"/>
 
             <TextView
                 android:id="@+id/LimitLabelTextView"
@@ -64,7 +57,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_alignParentBottom="true"
                 android:layout_margin="@dimen/summary_item_margin"
-                android:text="Limit"/>
+                android:text="@string/limit"/>
 
             <TextView
                 android:id="@+id/LimitTextView"
@@ -73,28 +66,13 @@
                 android:textAppearance="@style/TextAppearance.AppCompat.Large"
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
-                android:layout_margin="@dimen/summary_item_margin"
-                android:text="80000"/>
-
-            <!--<TextView-->
-                <!--android:id="@+id/BalanceLabelTextView"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:text="Balance:"/>-->
-
-            <!--<TextView-->
-                <!--android:id="@+id/BalanceTextView"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:text="40000"/>-->
-
-
+                android:layout_margin="@dimen/summary_item_margin" />
 
             <Button
                 android:id="@+id/DiagramsButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Diagrams"
+                android:text="@string/diagrams"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentEnd="true"
                 android:layout_margin="@dimen/summary_item_margin"/>

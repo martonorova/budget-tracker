@@ -19,10 +19,10 @@ public class App extends Application {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel limitWarningChannel = new NotificationChannel(
                     CHANNEL_ID,
-                    "Limit warning",
+                    getString(R.string.limit_warning),
                     NotificationManager.IMPORTANCE_HIGH
             );
-            limitWarningChannel.setDescription("A channel to warn if you spent 80% of the limit");
+            limitWarningChannel.setDescription(getString(R.string.limit_warning_channel_descr));
 
             NotificationManager manager = getSystemService(NotificationManager.class);
             manager.createNotificationChannel(limitWarningChannel);

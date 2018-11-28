@@ -73,7 +73,6 @@ public class CashMovementAdapter
     }
 
     class CashMovementViewHolder extends RecyclerView.ViewHolder {
-
         TextView categoryTextView;
         TextView directionTextView;
         TextView amountTextVIew;

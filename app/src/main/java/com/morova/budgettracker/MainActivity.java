@@ -44,8 +44,6 @@ public class MainActivity extends AppCompatActivity
 
     public static final String KEY_LIMIT = "com.morova.budgettracker.MainActivity.KEY_LIMIT";
 
-    ///TODO create resources where possible
-
     private CashMovementItemViewModel cashMovementItemViewModel;
     private CategoryViewModel categoryViewModel;
 
@@ -71,20 +69,25 @@ public class MainActivity extends AppCompatActivity
         initContentView();
         loadLimit();
 
+        initRecyclerView();
+        initViewModels();
+    }
+
+    private void initRecyclerView() {
         RecyclerView recyclerView = findViewById(R.id.MainRecyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
         recyclerView.setHasFixedSize(true);
-
-
         recyclerView.setAdapter(adapter);
+    }
 
-        categoryViewModel = ViewModelProviders.of(this)
+    private void initViewModels() {
+        categoryViewModel = ViewModelProviders.of(MainActivity.this)
                 .get(CategoryViewModel.class);
-        categoryViewModel.getAllCategories().observe(this, new CategoryObserver());
+        categoryViewModel.getAllCategories().observe(MainActivity.this, new CategoryObserver());
 
-        cashMovementItemViewModel = ViewModelProviders.of(this)
+        cashMovementItemViewModel = ViewModelProviders.of(MainActivity.this)
                 .get(CashMovementItemViewModel.class);
-        cashMovementItemViewModel.getAllItems().observe(this, new CashMovementItemsObserver());
+        cashMovementItemViewModel.getAllItems().observe(MainActivity.this, new CashMovementItemsObserver());
     }
 
     private void initContentView() {
@@ -124,7 +127,7 @@ public class MainActivity extends AppCompatActivity
 
             } catch (NullPointerException ex) {
                 Toast.makeText(MainActivity.this,
-                        String.format("Cannot load category for item %d", item.getId()),
+                        String.format(getString(R.string.category_load_error), item.getId()),
                         Toast.LENGTH_LONG).show();
                 continue;
             }
@@ -146,13 +149,13 @@ public class MainActivity extends AppCompatActivity
 
             if (newItem.getAmount() == -1 || newItem.getCategoryId() == -1) {
                 Toast.makeText(
-                        this,"Item cannot be saved, wrong amount or categoryId",
+                        this, R.string.item_save_error,
                         Toast.LENGTH_LONG)
                         .show();
             } else {
                 cashMovementItemViewModel.insert(newItem);
 
-                Toast.makeText(this, "Item saved", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, R.string.item_saved, Toast.LENGTH_LONG).show();
             }
         } else if (requestCode == EDIT_CASH_MOV_ITEM_REQUEST && resultCode == RESULT_OK) {
 
@@ -160,7 +163,7 @@ public class MainActivity extends AppCompatActivity
 
             if (id == -1) {
                 Toast.makeText(
-                        MainActivity.this, "Item cannot be updated.", Toast.LENGTH_LONG).show();
+                        MainActivity.this, R.string.item_update_error, Toast.LENGTH_LONG).show();
                 return;
             }
 
@@ -169,16 +172,16 @@ public class MainActivity extends AppCompatActivity
 
             if (newItem.getAmount() == -1 || newItem.getCategoryId() == -1) {
                 Toast.makeText(
-                        this,"Item cannot be updated, wrong amount or categoryId",
+                        this,R.string.item_update_error,
                         Toast.LENGTH_LONG)
                         .show();
             } else {
                 cashMovementItemViewModel.update(newItem);
-                Toast.makeText(this, "Item updated", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, R.string.item_updated, Toast.LENGTH_LONG).show();
             }
 
         } else {
-            Toast.makeText(this, "Item not saved", Toast.LENGTH_LONG)
+            Toast.makeText(this, R.string.item_not_saved, Toast.LENGTH_LONG)
                     .show();
         }
     }
@@ -190,13 +193,12 @@ public class MainActivity extends AppCompatActivity
         String comment = data.getStringExtra(AddEditCashMovementItemActivity.EXTRA_COMMENT);
         long categoryId = data.getLongExtra(AddEditCashMovementItemActivity.EXTRA_CATEGORY_ID, -1);
 
-        CashMovementItem newItem = new CashMovementItem(
+        return new CashMovementItem(
                 amount,
                 dateTime,
                 comment,
                 categoryId
         );
-        return newItem;
     }
 
     @Override
@@ -212,23 +214,16 @@ public class MainActivity extends AppCompatActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        //TODO switch
 
-        if (id == R.id.action_manage_categories) {
-            Intent intent = new Intent(MainActivity.this, CategoryListActivity.class);
-            startActivity(intent);
-            return true;
-        }
-
-        if (id == R.id.action_set_limit) {
-            new SetLimitDialogFragment()
-                    .show(getSupportFragmentManager(), SetLimitDialogFragment.TAG);
-            return true;
-        }
-
-        if (id == R.id.action_manage_notifications) {
-            //TODO implement
-            return true;
+        switch (id) {
+            case R.id.action_manage_categories:
+                Intent intent = new Intent(MainActivity.this, CategoryListActivity.class);
+                startActivity(intent);
+                return true;
+            case R.id.action_set_limit:
+                new SetLimitDialogFragment()
+                        .show(getSupportFragmentManager(), SetLimitDialogFragment.TAG);
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -327,9 +322,8 @@ public class MainActivity extends AppCompatActivity
         if (sumSpentAmount >= limit) {
             Notification notification = new Notification.Builder(this, App.CHANNEL_ID)
                     .setSmallIcon(R.drawable.ic_warning_black)
-                    .setContentTitle("Limit warning")
-                    .setContentText(String.format("You crossed the %d limit!", limit))
-                    //.setPriority(Notification.PRIORITY_DEFAULT)
+                    .setContentTitle(getString(R.string.limit_warning))
+                    .setContentText(String.format(getString(R.string.limit_cross_msg_format), limit))
                     .build();
 
             notificationManager.notify(1, notification);
@@ -339,16 +333,11 @@ public class MainActivity extends AppCompatActivity
         if (sumSpentAmount >= (limit * 0.8)) {
             Notification notification = new Notification.Builder(this, App.CHANNEL_ID)
                     .setSmallIcon(R.drawable.ic_warning_black)
-                    .setContentTitle("Limit warning")
-                    .setContentText(String.format("You got close to the %d limit!", limit))
-                    //.setPriority(Notification.PRIORITY_DEFAULT)
+                    .setContentTitle(getString(R.string.limit_warning))
+                    .setContentText(String.format(getString(R.string.limit_close_msg_format), limit))
                     .build();
 
             notificationManager.notify(1, notification);
         }
     }
-
-    //TODO make method for TOAST
-
-
 }
