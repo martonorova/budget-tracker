@@ -3,6 +3,7 @@
     package="com.morova.budgettracker">
 
     <application
+        android:name=".App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -12,6 +13,7 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
+            android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -19,6 +21,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".AddEditCashMovementItemActivity"
+            android:label="@string/title_activity_add_cash_movement_item"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".CategoryListActivity"
+            android:label="Categories" />
+        <activity android:name=".AddEditCategoryActivity" />
+        <activity
+            android:name=".DiagramsActivity"
+            android:label="@string/title_activity_tmp_diagrams"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

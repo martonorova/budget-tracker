@@ -1,6 +1,6 @@
 package com.morova.budgettracker.adapter;
 
-
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,9 +9,12 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.morova.budgettracker.R;
-import com.morova.budgettracker.data.CashMovementItem;
-import com.morova.budgettracker.data.Category;
+import com.morova.budgettracker.data.entities.CashMovementItem;
+import com.morova.budgettracker.data.entities.Category;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,36 +23,35 @@ import java.util.Map;
 public class CashMovementAdapter
         extends RecyclerView.Adapter<CashMovementAdapter.CashMovementViewHolder> {
 
-    private final List<CashMovementItem> items;
-    private final Map<Long, Category> categoryMap;
+    private List<CashMovementItem> items = new ArrayList<>();
+    private Map<Long, Category> categoryMap = new HashMap<>();
+    private OnItemClickListener listener;
 
-    private CashMovementItemClickListener listener;
-
-    public CashMovementAdapter(CashMovementItemClickListener listener) {
+    public CashMovementAdapter(OnItemClickListener listener) {
         this.listener = listener;
-        items = new ArrayList<>();
-        categoryMap = new HashMap<>();
     }
 
+    @NonNull
     @Override
-    public CashMovementViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public CashMovementViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater
                 .from(parent.getContext())
-                .inflate(R.layout.item_cash_movement_list, parent, false);
+                .inflate(R.layout.cash_movement_item, parent, false);
         return new CashMovementViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(CashMovementViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull CashMovementViewHolder holder, int position) {
 
         CashMovementItem item = items.get(position);
         Category actualCategory = categoryMap.get(item.getCategoryId());
         holder.categoryTextView.setText(actualCategory.getName());
         holder.directionTextView.setText(actualCategory.getDirection().toString());
-        holder.amountTextVIew.setText(item.getAmount());
-        //TODO item.getComment()
+        holder.amountTextVIew.setText(String.valueOf(item.getAmount()));
 
-        holder.item = item;
+        LocalDateTime localDateTime = item.getDateTime();
+        String dateTimeText = localDateTime.format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT));
+        holder.dateTextView.setText(dateTimeText);
     }
 
     @Override
@@ -57,47 +59,60 @@ public class CashMovementAdapter
         return items.size();
     }
 
-    public void addItem(CashMovementItem cashMovementItem) {
-        items.add(cashMovementItem);
-        notifyItemInserted(items.size() - 1);
-    }
-
-    public void updateCashMovementItems(List<CashMovementItem> cashMovementItems) {
-        items.clear();
-        items.addAll(cashMovementItems);
+    public void setCashMovementItems(List<CashMovementItem> cashMovementItems) {
+        items = cashMovementItems;
         notifyDataSetChanged();
     }
 
-    public void addCategory(Category category) {
-        categoryMap.put(category.getId(), category);
-    }
-
-    public void updateCategories(List<Category> categories) {
+    public void setCategories(List<Category> categories) {
+        categoryMap.clear();
         for (Category category : categories) {
             categoryMap.put(category.getId(), category);
         }
-    }
-
-    public interface CashMovementItemClickListener {
-        void onItemChanged(CashMovementItem cashMovementItem);
+        notifyDataSetChanged();
     }
 
     class CashMovementViewHolder extends RecyclerView.ViewHolder {
-
         TextView categoryTextView;
         TextView directionTextView;
         TextView amountTextVIew;
+        TextView dateTextView;
         ImageButton removeButton;
+        ImageButton editButton;
 
-        CashMovementItem item;
-
-        public CashMovementViewHolder(View itemView) {
+        public CashMovementViewHolder(final View itemView) {
             super(itemView);
-
             categoryTextView = itemView.findViewById(R.id.CategoryTextView);
             directionTextView = itemView.findViewById(R.id.DirectionTextView);
             amountTextVIew = itemView.findViewById(R.id.AmountTextView);
-            removeButton = itemView.findViewById(R.id.CashMovementItemRemoveButton);
+            dateTextView = itemView.findViewById(R.id.DateTextView);
+            removeButton = itemView.findViewById(R.id.RemoveCashMovementItemButton);
+            editButton = itemView.findViewById(R.id.EditCashMovementItemButton);
+
+            removeButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position = getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION) {
+                        listener.onItemRemoveClick(items.get(position));
+                    }
+                }
+            });
+
+            editButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position = getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION) {
+                        listener.onItemEditClick(items.get(position));
+                    }
+                }
+            });
         }
+    }
+
+    public interface OnItemClickListener {
+        void onItemRemoveClick(CashMovementItem cashMovementItem);
+        void onItemEditClick(CashMovementItem cashMovementItem);
     }
 }

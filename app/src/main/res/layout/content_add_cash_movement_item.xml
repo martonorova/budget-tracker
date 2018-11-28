@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    android:orientation="vertical"
+    android:padding="16dp"
+    tools:context="com.morova.budgettracker.AddEditCashMovementItemActivity"
+    tools:showIn="@layout/activity_add_edit_cash_movement_item">
+
+    <Button
+        android:id="@+id/ManageCategoriesButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/manage_categories"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/category"/>
+
+    <Spinner
+        android:id="@+id/CategorySpinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </Spinner>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/amount"/>
+
+    <EditText
+        android:id="@+id/AmountEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="numberDecimal"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/comment"/>
+
+    <EditText
+        android:id="@+id/CommentEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/comment"/>
+
+    <Button
+        android:id="@+id/SaveItemButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/save"/>
+
+
+</LinearLayout>
